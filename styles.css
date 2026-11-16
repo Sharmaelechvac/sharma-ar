@@ -106,3 +106,9 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
   .c-body[hidden]{display:block}
 }
 .tools[hidden]{display:none}
+
+/* Shared app nav — plain text, gold bar on the current app */
+.apps{display:flex;background:var(--white);border-bottom:1px solid var(--line)}
+.apps a{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;padding:8px 6px;font:700 16px/1.1 var(--head);color:var(--navy);text-decoration:none;text-transform:uppercase;letter-spacing:.04em;border-bottom:3px solid transparent;text-align:center}
+.apps a[aria-current="page"]{color:var(--dnavy);border-bottom-color:var(--gold)}
+.apps a:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}

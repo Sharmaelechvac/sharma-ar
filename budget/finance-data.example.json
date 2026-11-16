@@ -1,0 +1,235 @@
+{
+  "meta": {
+    "schemaVersion": 1,
+    "company": "Sharma Electric & HVAC",
+    "asOf": "2026-11-16",
+    "currency": "USD",
+    "updatedBy": ""
+  },
+  "invoices": [
+    {
+      "id": "ex-inv-oak-e1",
+      "number": "9001",
+      "client": "Example Homes",
+      "jobAddress": "100 Oak Street, Orlando FL",
+      "trade": "electrical",
+      "amount": 22000,
+      "dateSent": "2026-10-01",
+      "dueTerms": 30,
+      "status": "sent",
+      "datePaid": null,
+      "retainage": 2200
+    },
+    {
+      "id": "ex-inv-oak-e2",
+      "number": "9002",
+      "client": "Example Homes",
+      "jobAddress": "100 Oak St",
+      "trade": "electrical",
+      "amount": 18000,
+      "dateSent": "2026-09-01",
+      "dueTerms": 30,
+      "status": "paid",
+      "datePaid": "2026-09-20",
+      "retainage": 0
+    },
+    {
+      "id": "ex-inv-oak-h",
+      "number": "9003",
+      "client": "Example Homes",
+      "jobAddress": "100 Oak Street",
+      "trade": "hvac",
+      "amount": 15000,
+      "dateSent": "2026-10-15",
+      "dueTerms": 30,
+      "status": "sent",
+      "datePaid": null,
+      "retainage": 1500
+    },
+    {
+      "id": "ex-inv-pine",
+      "number": "9004",
+      "client": "Sample Builder LLC",
+      "jobAddress": "999 Nowhere Blvd, Tampa FL",
+      "trade": "electrical",
+      "amount": 4000,
+      "dateSent": "2026-11-01",
+      "dueTerms": 30,
+      "status": "sent",
+      "datePaid": null,
+      "retainage": 0
+    },
+    {
+      "id": "ex-inv-ghost",
+      "number": "9005",
+      "client": "Nobody Special",
+      "jobAddress": "400 Ghost Rd, Tampa FL",
+      "trade": "hvac",
+      "amount": 500,
+      "dateSent": "2026-11-02",
+      "dueTerms": 30,
+      "status": "sent",
+      "datePaid": null,
+      "retainage": 0
+    }
+  ],
+  "pnl": {
+    "divisions": ["electrical", "hvac"],
+    "months": [],
+    "marginFloor": 0.25,
+    "revenueBasis": "billed",
+    "sources": ["Example file for screenshots and tests. Not the live books."],
+    "notes": "Made-up dollars for a local screenshot. Not the live books.",
+    "jobs": [
+      {
+        "id": "ex-oak-elec",
+        "date": "2026-10-15",
+        "month": "2026-10",
+        "name": "Example Homes — 100 Oak St electrical",
+        "detail": "100 Oak Street, Orlando · two houses",
+        "division": "electrical",
+        "houses": 2,
+        "revenue": 40000,
+        "material": 8000,
+        "labor": 6000,
+        "other": 500,
+        "totalCost": 14500,
+        "note": "",
+        "flag": ""
+      },
+      {
+        "id": "ex-oak-hvac",
+        "date": "2026-10-15",
+        "month": "2026-10",
+        "name": "Example Homes — 100 Oak St HVAC",
+        "detail": "100 Oak Street, Orlando · two houses",
+        "division": "hvac",
+        "houses": 2,
+        "revenue": 15000,
+        "material": 12000,
+        "labor": 4000,
+        "other": 800,
+        "totalCost": 16800,
+        "note": "",
+        "flag": ""
+      },
+      {
+        "id": "ex-pine",
+        "date": "2026-11-01",
+        "month": "2026-11",
+        "name": "Sample Builder — 55 Pine Ave panel",
+        "detail": "55 Pine Ave, Tampa",
+        "division": "electrical",
+        "houses": 1,
+        "revenue": null,
+        "material": 1800,
+        "labor": 1200,
+        "other": 200,
+        "totalCost": 3200,
+        "note": "",
+        "flag": ""
+      },
+      {
+        "id": "ex-elm",
+        "date": "2026-11-10",
+        "month": "2026-11",
+        "name": "Demo Client — 9 Elm Rd rough",
+        "detail": "9 Elm Rd",
+        "division": "electrical",
+        "houses": null,
+        "revenue": null,
+        "material": null,
+        "labor": null,
+        "other": null,
+        "totalCost": null,
+        "note": "Budget started, most lines still open.",
+        "flag": "tbd"
+      },
+      {
+        "id": "ex-unassigned",
+        "date": "2026-11-06",
+        "month": "2026-11",
+        "name": "Unassigned example material",
+        "detail": "Receipt not tied to a street",
+        "division": "electrical",
+        "houses": null,
+        "revenue": 0,
+        "material": 100,
+        "labor": 0,
+        "other": 0,
+        "totalCost": 100,
+        "note": "",
+        "flag": "unassigned"
+      }
+    ]
+  },
+  "budgets": {
+    "jobs": [
+      {
+        "jobId": "ex-oak-elec",
+        "contractPrice": 50000,
+        "houses": 2,
+        "lines": [
+          {"division": "electrical", "phase": "underground", "costType": "material", "amount": 4000},
+          {"division": "electrical", "phase": "underground", "costType": "labor", "amount": 2000},
+          {"division": "electrical", "phase": "underground", "costType": "permit", "amount": 300},
+          {"division": "electrical", "phase": "underground", "costType": "other", "amount": 200},
+          {"division": "electrical", "phase": "rough-in", "costType": "material", "amount": 8000},
+          {"division": "electrical", "phase": "rough-in", "costType": "labor", "amount": 5000},
+          {"division": "electrical", "phase": "rough-in", "costType": "permit", "amount": 200},
+          {"division": "electrical", "phase": "rough-in", "costType": "other", "amount": 300},
+          {"division": "electrical", "phase": "trim", "costType": "material", "amount": 5000},
+          {"division": "electrical", "phase": "trim", "costType": "labor", "amount": 4000},
+          {"division": "electrical", "phase": "trim", "costType": "permit", "amount": 500},
+          {"division": "electrical", "phase": "trim", "costType": "other", "amount": 500}
+        ]
+      },
+      {
+        "jobId": "ex-oak-hvac",
+        "contractPrice": 28000,
+        "houses": 2,
+        "lines": [
+          {"division": "hvac", "phase": "underground", "costType": "material", "amount": 5000},
+          {"division": "hvac", "phase": "underground", "costType": "labor", "amount": 1500},
+          {"division": "hvac", "phase": "underground", "costType": "permit", "amount": 400},
+          {"division": "hvac", "phase": "underground", "costType": "other", "amount": 100},
+          {"division": "hvac", "phase": "rough-in", "costType": "material", "amount": 6000},
+          {"division": "hvac", "phase": "rough-in", "costType": "labor", "amount": 2500},
+          {"division": "hvac", "phase": "rough-in", "costType": "permit", "amount": 200},
+          {"division": "hvac", "phase": "rough-in", "costType": "other", "amount": 300},
+          {"division": "hvac", "phase": "trim", "costType": "material", "amount": 3000},
+          {"division": "hvac", "phase": "trim", "costType": "labor", "amount": 2000},
+          {"division": "hvac", "phase": "trim", "costType": "permit", "amount": 600},
+          {"division": "hvac", "phase": "trim", "costType": "other", "amount": 400}
+        ]
+      },
+      {
+        "jobId": "ex-pine",
+        "contractPrice": 8000,
+        "houses": 1,
+        "lines": [
+          {"division": "electrical", "phase": "underground", "costType": "material", "amount": 800},
+          {"division": "electrical", "phase": "underground", "costType": "labor", "amount": 400},
+          {"division": "electrical", "phase": "underground", "costType": "permit", "amount": 50},
+          {"division": "electrical", "phase": "underground", "costType": "other", "amount": 0},
+          {"division": "electrical", "phase": "rough-in", "costType": "material", "amount": 1200},
+          {"division": "electrical", "phase": "rough-in", "costType": "labor", "amount": 600},
+          {"division": "electrical", "phase": "rough-in", "costType": "permit", "amount": 100},
+          {"division": "electrical", "phase": "rough-in", "costType": "other", "amount": 150},
+          {"division": "electrical", "phase": "trim", "costType": "material", "amount": 800},
+          {"division": "electrical", "phase": "trim", "costType": "labor", "amount": 500},
+          {"division": "electrical", "phase": "trim", "costType": "permit", "amount": 200},
+          {"division": "electrical", "phase": "trim", "costType": "other", "amount": 200}
+        ]
+      },
+      {
+        "jobId": "ex-elm",
+        "contractPrice": null,
+        "houses": null,
+        "lines": [
+          {"division": "electrical", "phase": "rough-in", "costType": "material", "amount": 1500}
+        ]
+      }
+    ]
+  }
+}

@@ -1,25 +1,30 @@
-# Sharma AR — Accounts Receivable
+# Sharma AR and Budget
 
-Phone-first AR board for Sharma Electric & HVAC: what every builder owes us, what is overdue,
-and how old it is. Front end only. **All numbers come from the shared finance data file**, published encrypted as
-`finance-data.enc.json` and unlocked with the office code. Nothing is typed into the code.
+Phone-first books for Sharma Electric & HVAC. Front end only. **All numbers come from the shared finance file**, published encrypted as `finance-data.enc.json` and unlocked with the office code. Nothing is typed into the code.
 
-Live (once Pages is on): `https://sharmaelechvac.github.io/sharma-ar/`
+- **AR** — what every builder owes us, what is overdue, and how old it is.
+  Live: `https://sharmaelechvac.github.io/sharma-ar/`
+- **Budget** — budget vs actual, line by line, for each job.
+  Live: `https://sharmaelechvac.github.io/sharma-ar/budget/`
+- **P&L** — profit by job, in the other repo.
+  Live: `https://sharmaelechvac.github.io/sharma-pnl/`
 
 ## Files
 
 | File | What it is |
 |---|---|
-| `index.html` | Page shell |
+| `index.html` | AR page shell |
 | `styles.css` | Sharma standard: navy/gold, flat, 4px corners, 16px min text, 48px taps |
-| `app.js` | Loads the data file, does the math, draws the page |
-| `lock.js` | Code screen + WebCrypto decrypt (same file in sharma-pnl) |
-| `finance-data.enc.json` | **The data file, encrypted.** No invoices and no revenue yet; P&L job costs carried from the P&L sheet. Jarvis fills the rest. |
+| `app.js` | AR: loads the encrypted file through `lock.js`, does the math, draws the page |
+| `lock.js` | Code screen + WebCrypto decrypt. AR, Budget, and P&L use this. Wrong-code alerts are labeled per app. |
+| `finance-data.enc.json` | **The data file, encrypted.** The schema requires `budgets.jobs` (empty until entered) inside this file. The app treats a missing section as empty until the next encrypt. |
 | `tools/encrypt.py` | Schema check + encrypt (and `--decrypt` for editing) |
 | `.gitignore` | Keeps the plain `finance-data.json` out of git |
 | `SCHEMA.md` | Field-by-field rules for the data file |
 | `finance-data.schema.json` | JSON Schema to validate the data file |
 | `assets/logo.png` | Real Sharma Electric & HVAC horizontal logo (same art as the ACH sheet) |
+| `budget/` | Budget-by-job app (list, job detail, totals by division) |
+| `budget/finance-data.example.json` | Fake jobs for screenshots and tests. The published app does not load it. |
 
 ## Where the data lives
 
@@ -29,17 +34,18 @@ Live (once Pages is on): `https://sharmaelechvac.github.io/sharma-ar/`
   wait for Pages to publish (about a minute), reload. No code change, ever.
 - The old plain URL `.../sharma-ar/finance-data.json` is gone (404).
 
-## How AR and P&L share it (one source of truth)
+## How AR, P&L, and Budget share it (one source of truth)
 
-**Recommendation: this file is the only copy.** The Sharma P&L app (`sharma-pnl`) fetches
+**This file is the only copy.** The Sharma P&L app (`sharma-pnl`) fetches
 `https://sharmaelechvac.github.io/sharma-ar/finance-data.enc.json` instead of keeping its own.
 GitHub Pages allows cross-origin reads, so this works with no server.
 
 - AR reads `meta` + `invoices`.
 - P&L reads `meta` + `pnl` (`months`, `jobs`, `revenueBasis`, `marginFloor`, `sources`, `notes`) (and can read `invoices` to show "billed this month" as a check).
+- Budget reads `meta` + `pnl.jobs` (actual cost) + `invoices` (billed, paid, outstanding, retainage) + `budgets` (contract price and lines). It does not keep a second copy of any number.
 - Same file, same numbers. Nothing typed twice. Do not copy the JSON into `sharma-pnl`.
 - If Sanjay wants the data in its own repo later (e.g. `sharma-finance-data`), move the file
-  there and change the one `DATA_URL` line at the top of `app.js` in both apps.
+  there and change the one `DATA_URL` line at the top of `app.js` in each app.
 
 ## Schema (v1)
 
@@ -49,9 +55,16 @@ Full rules: `finance-data.schema.json` and `SCHEMA.md` (both in this repo). P&L 
 {
   "meta": { "schemaVersion": 1, "company": "Sharma Electric & HVAC", "asOf": "", "currency": "USD", "updatedBy": "" },
   "invoices": [],
-  "pnl": { "divisions": ["electrical", "hvac"], "months": [] }
+  "pnl": { "divisions": ["electrical", "hvac"], "months": [] },
+  "budgets": { "jobs": [] }
 }
 ```
+
+`budgets.jobs` is one budget per `pnl.jobs[].id` (`jobId`). Each budget has `contractPrice`, `houses`, and lines for material, labor, permit, and other, split by phase (underground, rough-in, trim) and by division. A line is never both electrical and HVAC. A site with both trades is two P&L jobs and two budgets. Null means not entered; the Budget app does not treat null as 0. `schemaVersion` stays 1.
+
+Projected margin = (contract price − budget) / contract price. Profit margin = (revenue − cost) / revenue. A job is flagged when projected margin is below `pnl.marginFloor` (default 0.25).
+
+Invoices match a job only when `trade` equals the job's division, and then only if the street address or the client name appears on that job. If two jobs tie, the invoice is left unmatched. The full rule is in `SCHEMA.md`.
 
 Invoice fields, exactly: `id`, `number`, `client`, `jobAddress`, `trade` (`electrical`|`hvac`),
 `amount` (number), `dateSent` (`YYYY-MM-DD`), `dueTerms` (integer days), `status`
@@ -132,6 +145,34 @@ the schema check fails, and checks that its output decrypts back to the same dat
 
 The page survives missing or bad fields (blank client, text amounts, bad dates) without
 crashing, but the numbers are only right if the file follows the schema.
+
+AR and Budget both use `lock.js`. After unlock, only the derived key is kept in `sessionStorage` for this tab. Five wrong tries on Budget send the same office alert as AR, labeled `Sharma Budget`. The code is not in this repo.
+
+## Shared nav
+
+AR and Budget have a plain-text tab bar (gold bar on the current app). To add that bar in `sharma-pnl`, paste only the markup below after `</header>`, plus the CSS. Do not change P&L's `lock.js` or its `DATA_URL`.
+
+```html
+<nav class="apps" aria-label="Sharma apps">
+  <a href="https://sharmaelechvac.github.io/sharma-ar/">AR</a>
+  <a href="https://sharmaelechvac.github.io/sharma-pnl/" aria-current="page">P&amp;L</a>
+  <a href="https://sharmaelechvac.github.io/sharma-ar/budget/">Budget</a>
+</nav>
+```
+
+```css
+.apps{display:flex;background:var(--white);border-bottom:1px solid var(--line)}
+.apps a{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;padding:8px 6px;font:700 16px/1.1 var(--head);color:var(--navy);text-decoration:none;text-transform:uppercase;letter-spacing:.04em;border-bottom:3px solid transparent;text-align:center}
+.apps a[aria-current="page"]{color:var(--dnavy);border-bottom-color:var(--gold)}
+```
+
+## Budget screens
+
+1. **Jobs** — budget, actual cost to date, variance in dollars and percent, projected margin, and a below-floor flag.
+2. **Job** — budget, actual, and variance for each phase and cost type, plus billed / paid / outstanding / retainage from the matched invoices.
+3. **Divisions** — electrical and HVAC totaled apart.
+
+Phase actuals are not in the finance file, so those cells stay "not entered". Material, labor, and other actuals are the P&L job totals. Permit has no actual of its own. `budget/finance-data.example.json` is for local screenshots (`?example=1` on localhost only) and for tests. The page on GitHub Pages never requests it.
 
 ## Design
 

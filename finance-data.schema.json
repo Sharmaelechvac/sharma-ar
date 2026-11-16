@@ -1,12 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sharmaelechvac.github.io/sharma-ar/finance-data.schema.json",
-  "title": "Sharma Electric & HVAC shared finance data (AR + P&L)",
+  "title": "Sharma Electric & HVAC shared finance data (AR + P&L + Budget)",
   "type": "object",
   "required": [
     "meta",
     "invoices",
-    "pnl"
+    "pnl",
+    "budgets"
   ],
   "properties": {
     "meta": {
@@ -272,6 +273,61 @@
                   "unassigned",
                   "costOnly"
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "description": "Job budgets. Ships empty. One object per pnl.jobs[] row, linked by jobId. Lines are never blended across electrical and HVAC.",
+      "required": ["jobs"],
+      "additionalProperties": false,
+      "properties": {
+        "jobs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["jobId", "contractPrice", "houses", "lines"],
+            "additionalProperties": false,
+            "properties": {
+              "jobId": {
+                "type": "string",
+                "description": "pnl.jobs[].id. One budget per job id."
+              },
+              "contractPrice": {
+                "type": ["number", "null"],
+                "description": "Sold price for this job. null = not entered. Not the same as pnl.jobs[].revenue (billed to date)."
+              },
+              "houses": {
+                "type": ["integer", "null"],
+                "minimum": 0,
+                "description": "Houses on the budget. null = not entered. The app does not copy pnl.jobs[].houses into this field."
+              },
+              "lines": {
+                "type": "array",
+                "description": "One row per division + phase + cost type. Omit a row, or set amount null, for not entered. 0 means budgeted zero. A site with both trades has two pnl jobs and two budgets; every line still names its division.",
+                "items": {
+                  "type": "object",
+                  "required": ["division", "phase", "costType", "amount"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "division": {
+                      "enum": ["electrical", "hvac"]
+                    },
+                    "phase": {
+                      "enum": ["underground", "rough-in", "trim"]
+                    },
+                    "costType": {
+                      "enum": ["material", "labor", "permit", "other"]
+                    },
+                    "amount": {
+                      "type": ["number", "null"],
+                      "description": "Budget dollars. null = not entered. Never stored as a blended electrical+HVAC figure."
+                    }
+                  }
+                }
               }
             }
           }

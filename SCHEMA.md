@@ -1,9 +1,10 @@
 # finance-data.json — shared schema (v1)
 
-One file feeds both Sharma apps:
+One file feeds all three Sharma apps:
 
 - **Sharma AR** (`sharma-ar`) reads `meta` + `invoices`.
 - **Sharma P&L** (`sharma-pnl`) reads `meta` + `pnl` (and may read `invoices` for a "billed this month" cross-check).
+- **Sharma Budget** (`sharma-ar/budget/`) reads `meta` + `pnl.jobs` + `invoices` + `budgets`. Actual cost comes from `pnl.jobs`. Billed, paid, outstanding, and retainage come from `invoices` matched to the job (rule below). Budget dollars come only from `budgets`.
 
 Nobody types a number twice. Jarvis edits only this JSON. The apps never hold numbers in code.
 
@@ -22,10 +23,11 @@ cross-repo fetch works. Do not keep a second copy in `sharma-pnl`.
 
 Files in this folder:
 
-- `finance-data.enc.json` — the encrypted data file (the only data file in git).
+- `finance-data.enc.json` — the encrypted data file (the only live data file in git). `budgets.jobs` belongs inside it and ships empty.
 - `tools/encrypt.py` — schema check + encrypt; `--decrypt` writes a local plain `finance-data.json` for editing.
 - `finance-data.schema.json` — JSON Schema (draft 2020-12) for validation.
 - `SCHEMA.md` — this page.
+- `budget/finance-data.example.json` — fake jobs for screenshots and tests. The published Budget app does not load it.
 
 ## Top level
 
@@ -42,13 +44,16 @@ Files in this folder:
   "pnl": {
     "divisions": ["electrical", "hvac"],
     "months": []
+  },
+  "budgets": {
+    "jobs": []
   }
 }
 ```
 
 | Field | Type | Notes |
 |---|---|---|
-| meta.schemaVersion | integer | `1`. Bump only if a field changes meaning. |
+| meta.schemaVersion | integer | `1`. Bump only if a field changes meaning. Adding `budgets` does not bump it. |
 | meta.company | string | `"Sharma Electric & HVAC"` |
 | meta.asOf | string | `YYYY-MM-DD` (or `YYYY-MM-DDTHH:MM-05:00`). Empty until filled. Shown as "Data as of". |
 | meta.currency | string | `"USD"` |
@@ -204,6 +209,71 @@ add up); if `pnl.months` is empty it adds up `pnl.jobs` instead.
 Revenue basis: SCHEMA.md open decision 1 is now settled as **billed**. pnl.months[].<div>.revenue =
 sum of invoices[].amount with that trade and dateSent in that month. The P&L app warns on a mismatch.
 
+## budgets — one budget per P&L job
+
+`budgets.jobs` ships **empty**. Nothing in this file is a sample budget. The only filled example is `budget/finance-data.example.json`, and the published app does not load it.
+
+| Field | Type | Rule |
+|---|---|---|
+| budgets.jobs | array | One object per job. Empty until Jarvis enters budgets. |
+| budgets.jobs[].jobId | string | `pnl.jobs[].id`. Unique. One budget per job. |
+| budgets.jobs[].contractPrice | number \| null | Sold price. null = not entered. This is not `pnl.jobs[].revenue` (billed to date). |
+| budgets.jobs[].houses | integer \| null | Houses on the budget. null = not entered. The app does not copy `pnl.jobs[].houses` into this field. |
+| budgets.jobs[].lines | array | Budget lines. A missing line, or `amount: null`, means not entered. `0` means budgeted zero. |
+
+Each line:
+
+| Field | Type | Rule |
+|---|---|---|
+| division | `"electrical"` \| `"hvac"` | Required on every line. A line is never both trades. |
+| phase | `"underground"` \| `"rough-in"` \| `"trim"` | |
+| costType | `"material"` \| `"labor"` \| `"permit"` \| `"other"` | Permit is its own budget line. |
+| amount | number \| null | Dollars. null = not entered. |
+
+A site with both trades is already two `pnl.jobs` rows (one division each), so it gets two budgets. Do not put HVAC dollars on an electrical line or the reverse. If a budget's lines name the other division, the app shows them in their own group and does not add them into this job's total.
+
+### How the Budget app reads actuals
+
+`pnl.jobs` has no phase split, and no separate permit field (`other` is "permit / other").
+
+- **Actual cost to date** = `pnl.jobs[].totalCost`. null stays "not entered". The app does not invent a total from material + labor + other when `totalCost` is null.
+- **Phase actual** = not entered. The file does not store actuals by phase.
+- **Material actual** = `pnl.jobs[].material`. **Labor actual** = `pnl.jobs[].labor`.
+- **Permit actual** = not entered.
+- **Other actual** = `pnl.jobs[].other`, which may already include permits. The app does not subtract a guessed permit out of other.
+- **Budget cost** = sum of line amounts for this job's division. Lines that are null are not added as zero. If every line is null or missing, the budget is not entered. If some lines are numbers and some are null, the app shows the sum of the numbers and how many lines are still not entered. Variance and projected margin wait until all 12 lines for that division (3 phases × 4 cost types) are numbers, so a partial budget is not treated as complete.
+- **Variance** = budget − actual cost. Positive is under budget. If either side is null, or the budget is partial, variance is not entered. Variance % = variance / budget. If budget is 0, the percent is undefined (`—`), not zero.
+- **Projected margin** = (contract price − budgeted cost) / contract price. Same shape as profit margin, using the sold price and the full budget. null inputs stay "not entered". If contract price is 0, the percent is undefined (`—`). Flag the job when this margin is a number and is **below** `pnl.marginFloor` (default 0.25 if the field is missing). Equal to the floor is not flagged.
+- **Margin to date** = (`pnl.jobs[].revenue` − `pnl.jobs[].totalCost`) / `pnl.jobs[].revenue`. null stays "not entered". Revenue of 0 is undefined (`—`), not a fake margin.
+
+Profit margin everywhere in this app is (revenue − cost) / revenue.
+
+### Invoice matching (Budget app)
+
+Invoices have `client` and `jobAddress`. Jobs have `name` and `detail`, not those fields. The app matches at read time. It does not write the match back into the file.
+
+1. **Trade gate.** `invoice.trade` must equal `job.division`. An electrical invoice never attaches to an HVAC job, or the reverse.
+2. **Normalize.** Lowercase, turn punctuation into spaces, drop a trailing LLC / Inc / Co / Corp.
+3. **Address match.** Take the street number in `jobAddress` (if there is one) and the street-name words (3 or more letters, ignoring street/road/drive/avenue and compass words). The job matches when that street number appears as its own word in `name` or `detail` **and** at least one street-name word does too. If the address has no street number, it matches only when two street-name words appear.
+4. **Client match.** The client name appears as a whole phrase in `name` or `detail` (at least 3 characters).
+5. **One job.** Address outranks client. The invoice attaches to the single highest score. If two jobs tie, it stays unmatched so the dollars are not counted twice. An invoice number mentioned on the job breaks a tie only when address or client already matched. The number alone is not a match.
+6. **Sums, once attached.** Billed = sum of `amount`. Paid = sum of `amount` where status is `paid`. Outstanding = sum of `amount` where status is not `paid`. Retainage held = sum of `retainage` on unpaid invoices (same rule as AR). No matched invoices means those sums are $0, which is an empty set, not a null. A null amount on a matched invoice is not entered and is not added as zero.
+
+### Example budget object — EXAMPLE SHAPE ONLY, NOT DATA
+
+```json
+{
+  "jobId": "pnl-job-id",
+  "contractPrice": null,
+  "houses": null,
+  "lines": [
+    { "division": "electrical", "phase": "underground", "costType": "material", "amount": null },
+    { "division": "electrical", "phase": "rough-in", "costType": "labor", "amount": null },
+    { "division": "hvac", "phase": "trim", "costType": "permit", "amount": null }
+  ]
+}
+```
+
 ## Open decisions (Sanjay / Jarvis)
 
 1. **P&L revenue basis — SETTLED: billed** (Sanjay, 2026-11-15). Revenue is booked when invoiced.
@@ -217,6 +287,6 @@ sum of invoices[].amount with that trade and dateSent in that month. The P&L app
 
 - `python3 tools/encrypt.py` validates the plain file against `finance-data.schema.json` (and checks
   for duplicate invoice ids) and refuses to write `finance-data.enc.json` if anything fails.
-- Every `id` unique; `paid` has a `datePaid`; amounts are plain numbers.
-- Update `meta.asOf` and `meta.updatedBy` on every edit.
+- Every `id` unique; every `budgets.jobs[].jobId` unique and present on `pnl.jobs`; `paid` has a `datePaid`; amounts are plain numbers.
+- Update `meta.asOf` and `meta.updatedBy` on every edit that changes numbers. Adding an empty `budgets` section does not by itself refresh `asOf`.
 - Commit only `finance-data.enc.json`. Never commit the plain `finance-data.json`.
