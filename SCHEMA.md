@@ -7,14 +7,23 @@ One file feeds both Sharma apps:
 
 Nobody types a number twice. Jarvis edits only this JSON. The apps never hold numbers in code.
 
-**Single source of truth:** `https://sharmaelechvac.github.io/sharma-ar/finance-data.json`
-(repo `Sharmaelechvac/sharma-ar`, file `finance-data.json` at repo root). The P&L app fetches that
+**Encrypted at rest.** The schema below describes the plain `finance-data.json`, which is a
+local working copy only (in `.gitignore`, never committed). What is published is
+`finance-data.enc.json`, made by `tools/encrypt.py` (AES-GCM 256, PBKDF2-SHA256 600,000
+iterations, random salt and IV). Workflow: `python3 tools/encrypt.py --decrypt` → edit
+`finance-data.json` → `python3 tools/encrypt.py` (runs the schema check, then encrypts) → commit
+only `finance-data.enc.json`. The office code comes from `SHARMA_PASSCODE` or a hidden prompt and
+is never written anywhere. Sanjay gives it out directly.
+
+**Single source of truth:** `https://sharmaelechvac.github.io/sharma-ar/finance-data.enc.json`
+(repo `Sharmaelechvac/sharma-ar`, file `finance-data.enc.json` at repo root). The P&L app fetches that
 URL with `cache: 'no-store'`. GitHub Pages sends `Access-Control-Allow-Origin: *`, so a
 cross-repo fetch works. Do not keep a second copy in `sharma-pnl`.
 
 Files in this folder:
 
-- `finance-data.json` — the empty template (ship as-is; Jarvis fills it).
+- `finance-data.enc.json` — the encrypted data file (the only data file in git).
+- `tools/encrypt.py` — schema check + encrypt; `--decrypt` writes a local plain `finance-data.json` for editing.
 - `finance-data.schema.json` — JSON Schema (draft 2020-12) for validation.
 - `SCHEMA.md` — this page.
 
@@ -206,7 +215,8 @@ sum of invoices[].amount with that trade and dateSent in that month. The P&L app
 
 ## Validation before every commit
 
-- `python3 -m json.tool finance-data.json` passes (valid JSON).
-- Validate against `finance-data.schema.json` (e.g. `npx ajv-cli validate -s finance-data.schema.json -d finance-data.json --spec=draft2020`).
+- `python3 tools/encrypt.py` validates the plain file against `finance-data.schema.json` (and checks
+  for duplicate invoice ids) and refuses to write `finance-data.enc.json` if anything fails.
 - Every `id` unique; `paid` has a `datePaid`; amounts are plain numbers.
 - Update `meta.asOf` and `meta.updatedBy` on every edit.
+- Commit only `finance-data.enc.json`. Never commit the plain `finance-data.json`.

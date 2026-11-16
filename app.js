@@ -1,7 +1,7 @@
-/* Sharma AR — reads ./finance-data.json at load. No numbers live in this file. */
+/* Sharma AR — reads ./finance-data.enc.json at load (encrypted; unlocked by lock.js). No numbers live in this file. */
 (function () {
   "use strict";
-  var DATA_URL = "finance-data.json";
+  var DATA_URL = "finance-data.enc.json";
   var DAY = 86400000;
   var BUCKETS = [
     { key: "b0", label: "0–30", min: 0, max: 30 },
@@ -159,11 +159,11 @@
     document.querySelector(".tools").hidden = !gl.length || !!loadError;
     var host = $("clients");
     if (loadError) {
-      host.innerHTML = '<p class="warn">Could not load finance-data.json (' + esc(loadError) + "). Numbers above show zero until the file loads.</p>";
+      host.innerHTML = '<p class="warn">Could not load the finance data (' + esc(loadError) + "). Numbers above show zero until the file loads.</p>";
     } else if (!invs.length) {
-      host.innerHTML = '<p class="empty">No invoices loaded yet. Data file: finance-data.json</p>';
+      host.innerHTML = '<p class="empty">No invoices entered yet.</p>';
     } else if (!gl.length) {
-      host.innerHTML = '<p class="empty">No open invoices. Everything in finance-data.json is marked paid.</p>';
+      host.innerHTML = '<p class="empty">No open invoices. Everything in the data file is marked paid.</p>';
     } else {
       host.innerHTML = gl.map(function (g, i) {
         var id = "c-" + i;
@@ -214,8 +214,7 @@
   });
 
   render({}, null);
-  fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" })
-    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  window.SharmaLock.load(DATA_URL, { appName: "Accounts Receivable", logo: "assets/logo.png" })
     .then(function (d) { render(d, null); })
     .catch(function (err) { render({}, err && err.message ? err.message : "unknown error"); });
 })();
