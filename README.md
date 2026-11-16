@@ -103,3 +103,11 @@ Sharma standard (Mark Cuban, Design, 11/15): navy #264387, dark navy #1a2f61, go
 ink #1d2433, gray #5b6478, lines #dfe4ee, page #f4f6fb. Barlow Semi Condensed 700 headings,
 Inter body, IBM Plex Mono numbers. White header, real logo, 3px gold line. No gradients,
 shadows, blur, emoji, pills or charts that don't track anything real.
+
+## Publishing (how edits go live)
+
+- Edit **`main`** only. GitHub Pages serves the `gh-pages` branch.
+- `.github/workflows/publish.yml` runs on every push to `main`: it copies `main` onto `gh-pages`
+  and publishes it. Live in about 1 minute. Never edit `gh-pages` by hand; it is overwritten.
+- If Sanjay ever switches Settings > Pages to "Deploy from branch: main / (root)", the workflow
+  and the `gh-pages` branch can be removed.
