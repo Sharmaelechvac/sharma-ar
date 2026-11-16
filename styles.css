@@ -79,6 +79,8 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .i-no{font:600 17px var(--mono);color:var(--dnavy)}
 .i-amt{font:600 18px var(--mono);color:var(--ink);text-align:right}
 .i-addr{margin-top:4px;font-size:16px;color:var(--ink)}
+.i-sf{margin-top:4px;font-size:16px;color:var(--gray)}
+.i-sf .num{color:var(--ink)}
 .i-meta{margin-top:4px;font-size:16px;color:var(--gray)}
 .i-meta .num{color:var(--ink)}
 .flag{display:inline-block;margin-top:8px;padding:3px 8px;border-radius:3px;font:700 16px/1.2 var(--head);letter-spacing:.05em;text-transform:uppercase}

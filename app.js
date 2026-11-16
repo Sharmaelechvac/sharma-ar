@@ -23,6 +23,19 @@
     var cents = Math.abs(n % 1) > 0.004;
     return (n < 0 ? "-$" : "$") + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: cents ? 2 : 0, maximumFractionDigits: 2 });
   }
+  // Square feet: optional livingSF / underRoofSF. Only a real number counts;
+  // absent, null, or non-numeric stays null and renders as "not on file". Never invented.
+  function sfVal(v) {
+    if (typeof v === "number") return isFinite(v) ? v : null;
+    if (typeof v === "string" && v.trim() !== "") {
+      var n = parseFloat(v.replace(/,/g, ""));
+      return isFinite(n) ? n : null;
+    }
+    return null;
+  }
+  function fmtSF(v) {
+    return v == null ? "not on file" : Math.round(v).toLocaleString("en-US");
+  }
   // Local-calendar dates only (no UTC drift). Returns ms at local midnight or null.
   function parseDate(s) {
     if (typeof s !== "string") return null;
@@ -61,6 +74,8 @@
       client: String(raw.client || "").trim() || "No client name",
       jobAddress: String(raw.jobAddress || "").trim(),
       trade: trade === "hvac" ? "HVAC" : trade === "electrical" ? "Electrical" : "",
+      livingSF: sfVal(raw.livingSF),
+      underRoofSF: sfVal(raw.underRoofSF),
       amount: num(raw.amount),
       retainage: num(raw.retainage),
       terms: terms, sent: sent, due: due, paid: paid,
@@ -93,6 +108,7 @@
     return '<div class="inv' + (inv.isOver ? " over" : "") + '">' +
       '<div class="i-top"><span class="i-no">' + (inv.number === "—" ? "No invoice #" : "#" + esc(inv.number)) + '</span><span class="i-amt">' + money(inv.amount) + "</span></div>" +
       (inv.jobAddress ? '<div class="i-addr">' + esc(inv.jobAddress) + "</div>" : "") +
+      '<div class="i-sf">Living SF: <span class="num">' + esc(fmtSF(inv.livingSF)) + '</span> · Under Roof SF: <span class="num">' + esc(fmtSF(inv.underRoofSF)) + "</span></div>" +
       '<div class="i-meta">' + meta.join(" · ") + "</div>" + flag(inv) + "</div>";
   }
 

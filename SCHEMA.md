@@ -59,7 +59,7 @@ Files in this folder:
 | meta.currency | string | `"USD"` |
 | meta.updatedBy | string | Who last edited, e.g. `"Jarvis"`. |
 
-## invoices[] — these 11 fields (plus optional `description`, `warning`)
+## invoices[] — these 11 fields (plus optional `description`, `warning`, `livingSF`, `underRoofSF`)
 
 | Field | Type | Rule |
 |---|---|---|
@@ -76,6 +76,8 @@ Files in this folder:
 | retainage | number | Dollars the builder is holding on this invoice. `0` if none. |
 | description | string (optional) | What the invoice is for. |
 | warning | string (optional) | Reconcile note (source conflict, Jobber draft, etc.). Text only. |
+| livingSF | integer \| null (optional) | Living square feet of the house. May be absent. Absent or null = not on file; apps show "not on file" and never invent a figure. |
+| underRoofSF | integer \| null (optional) | Under-roof square feet of the house. May be absent. Absent or null = not on file; apps show "not on file" and never invent a figure. |
 
 Optional top-level sections (no app reads them for numbers): `warnings` (strings), `handoffNotes` (strings), `unbilledDrafts` (object: unsent Jobber drafts — unbilled pipeline, **never** counted in any AR, P&L or Budget total).
 
@@ -112,7 +114,9 @@ Optional top-level sections (no app reads them for numbers): `warnings` (strings
   "dueTerms": 30,
   "status": "sent",
   "datePaid": null,
-  "retainage": 0
+  "retainage": 0,
+  "livingSF": null,
+  "underRoofSF": null
 }
 ```
 
@@ -163,6 +167,8 @@ finance-data.schema.json (`pnl.revenueBasis` is required).
 | pnl.jobs[].detail | string | Address, invoice #s, how revenue was figured. |
 | pnl.jobs[].division | `"electrical"` \| `"hvac"` | Lowercase, same as invoices[].trade. |
 | pnl.jobs[].houses | integer \| null | |
+| pnl.jobs[].livingSF | integer \| null (optional) | Living square feet of the house. May be absent. Absent or null = not on file; apps show "not on file" and never invent a figure. |
+| pnl.jobs[].underRoofSF | integer \| null (optional) | Under-roof square feet of the house. May be absent. Absent or null = not on file; apps show "not on file" and never invent a figure. |
 | pnl.jobs[].revenue | number \| null | **Billed** revenue on the job's invoices (accrual, Sanjay 2026-11-15). null = not entered. 0 for cost-only rows. |
 | pnl.jobs[].material | number \| null | null = not entered. |
 | pnl.jobs[].labor | number \| null | Crew labor incl. meter labor. |
@@ -194,6 +200,8 @@ Suggested JSON Schema fragment for `properties.pnl.properties`:
       "detail": { "type": "string" },
       "division": { "enum": ["electrical", "hvac"] },
       "houses": { "type": ["integer", "null"] },
+      "livingSF": { "type": ["integer", "null"] },
+      "underRoofSF": { "type": ["integer", "null"] },
       "revenue": { "type": ["number", "null"] },
       "material": { "type": ["number", "null"] },
       "labor": { "type": ["number", "null"] },
@@ -223,6 +231,8 @@ sum of invoices[].amount with that trade and dateSent in that month. The P&L app
 | budgets.jobs[].jobId | string | `pnl.jobs[].id`. Unique. One budget per job. |
 | budgets.jobs[].contractPrice | number \| null | Sold price. null = not entered. This is not `pnl.jobs[].revenue` (billed to date). |
 | budgets.jobs[].houses | integer \| null | Houses on the budget. null = not entered. The app does not copy `pnl.jobs[].houses` into this field. |
+| budgets.jobs[].livingSF | integer \| null (optional) | Living square feet of the house. May be absent. Absent or null = not on file; apps show "not on file" and never invent a figure. |
+| budgets.jobs[].underRoofSF | integer \| null (optional) | Under-roof square feet of the house. May be absent. Absent or null = not on file; apps show "not on file" and never invent a figure. |
 | budgets.jobs[].lines | array | Budget lines. A missing line, or `amount: null`, means not entered. `0` means budgeted zero. |
 
 Each line:
@@ -270,6 +280,8 @@ Invoices have `client` and `jobAddress`. Jobs have `name` and `detail`, not thos
   "jobId": "pnl-job-id",
   "contractPrice": null,
   "houses": null,
+  "livingSF": null,
+  "underRoofSF": null,
   "lines": [
     { "division": "electrical", "phase": "underground", "costType": "material", "amount": null },
     { "division": "electrical", "phase": "rough-in", "costType": "labor", "amount": null },

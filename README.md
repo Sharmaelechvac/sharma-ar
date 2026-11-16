@@ -71,6 +71,9 @@ Invoice fields: `id`, `number`, `client`, `jobAddress`, `trade` (`electrical`|`h
 (`sent`|`paid`|`overdue`|`undelivered`), `datePaid` (`YYYY-MM-DD` or `null`), `retainage` (number, `0` if none).
 Optional: `description`, `warning` (text). `trade` may be `null` when the source invoice states no trade (not guessed).
 Optional top-level `warnings`, `handoffNotes`, and `unbilledDrafts` (unsent Jobber drafts — never counted in any AR total).
+Optional: `livingSF` / `underRoofSF` (integer or `null`; absent or `null` = not on file — the apps show
+"not on file" and never invent a figure). The same two optional fields are accepted on `pnl.jobs[]` and
+`budgets.jobs[]`; AR shows them on each invoice row, Budget on each job (list, table, and detail), and P&L on each job card.
 
 **Example invoice — EXAMPLE SHAPE ONLY, NOT DATA:**
 

@@ -24,6 +24,30 @@
     return typeof n === "number" && isFinite(n);
   }
 
+  // Square feet: optional livingSF / underRoofSF. Only a real number counts;
+  // absent, null, or non-numeric stays null and renders as "not on file". Never invented.
+  function sfVal(v) {
+    if (typeof v === "number") return isFinite(v) ? v : null;
+    if (typeof v === "string" && v.trim() !== "") {
+      var n = parseFloat(v.replace(/,/g, ""));
+      return isFinite(n) ? n : null;
+    }
+    return null;
+  }
+
+  function pickSF() {
+    for (var i = 0; i < arguments.length; i++) {
+      var v = sfVal(arguments[i]);
+      if (v != null) return v;
+    }
+    return null;
+  }
+
+  function sfText(v) {
+    var n = sfVal(v);
+    return n == null ? "not on file" : Math.round(n).toLocaleString("en-US");
+  }
+
   function money(v) {
     if (!isNum(v)) return "not entered";
     var n = Math.round(v * 100) / 100;
@@ -322,6 +346,14 @@
     var actual = isNum(job.totalCost) ? job.totalCost : null;
     var contract = budget && isNum(budget.contractPrice) ? budget.contractPrice : null;
     var housesBudget = budget && isNum(budget.houses) ? budget.houses : null;
+    // SF fallback chain, per field: P&L job, then its budget, then a matched invoice.
+    var invLiving = null, invRoof = null;
+    (matched || []).forEach(function (m) {
+      if (invLiving == null) invLiving = sfVal(m && m.invoice && m.invoice.livingSF);
+      if (invRoof == null) invRoof = sfVal(m && m.invoice && m.invoice.underRoofSF);
+    });
+    var livingSF = pickSF(job.livingSF, budget && budget.livingSF, invLiving);
+    var underRoofSF = pickSF(job.underRoofSF, budget && budget.underRoofSF, invRoof);
     var useBudget = !!(div && bud.complete);
     var vari = useBudget ? variance(bud.amount, actual) : { value: null, reason: "missing" };
     var variPct = useBudget ? variancePct(bud.amount, actual) : { value: null, reason: "missing" };
@@ -381,6 +413,8 @@
       divisionLabel: div ? DIV_LABEL[div] : "Division not set",
       housesJob: isNum(job.houses) ? job.houses : null,
       housesBudget: housesBudget,
+      livingSF: livingSF,
+      underRoofSF: underRoofSF,
       contractPrice: contract,
       revenue: isNum(job.revenue) ? job.revenue : null,
       budget: bud,
@@ -545,6 +579,8 @@
     DIV_LABEL: DIV_LABEL,
     LINES_PER_DIVISION: LINES_PER_DIVISION,
     isNum: isNum,
+    sfVal: sfVal,
+    sfText: sfText,
     money: money,
     pct: pct,
     margin: margin,

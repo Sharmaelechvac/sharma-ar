@@ -123,6 +123,16 @@
           "warning": {
             "type": "string",
             "description": "Optional. Data-quality note from the reconcile (source conflict, draft in Jobber, etc.). Not a number."
+          },
+          "livingSF": {
+            "type": ["integer", "null"],
+            "minimum": 0,
+            "description": "Optional. Living square feet of the house on this invoice. null or absent = not on file; apps show 'not on file' and never invent a figure."
+          },
+          "underRoofSF": {
+            "type": ["integer", "null"],
+            "minimum": 0,
+            "description": "Optional. Under-roof square feet of the house on this invoice. null or absent = not on file; apps show 'not on file' and never invent a figure."
           }
         }
       }
@@ -239,6 +249,16 @@
                   "null"
                 ]
               },
+              "livingSF": {
+                "type": ["integer", "null"],
+                "minimum": 0,
+                "description": "Optional. Living square feet of the house on this job. null or absent = not on file; apps show 'not on file' and never invent a figure."
+              },
+              "underRoofSF": {
+                "type": ["integer", "null"],
+                "minimum": 0,
+                "description": "Optional. Under-roof square feet of the house on this job. null or absent = not on file; apps show 'not on file' and never invent a figure."
+              },
               "revenue": {
                 "type": [
                   "number",
@@ -327,6 +347,16 @@
                 ],
                 "minimum": 0,
                 "description": "Houses on the budget. null = not entered. The app does not copy pnl.jobs[].houses into this field."
+              },
+              "livingSF": {
+                "type": ["integer", "null"],
+                "minimum": 0,
+                "description": "Optional. Living square feet of the house on this budget. null or absent = not on file; apps show 'not on file' and never invent a figure."
+              },
+              "underRoofSF": {
+                "type": ["integer", "null"],
+                "minimum": 0,
+                "description": "Optional. Under-roof square feet of the house on this budget. null or absent = not on file; apps show 'not on file' and never invent a figure."
               },
               "lines": {
                 "type": "array",

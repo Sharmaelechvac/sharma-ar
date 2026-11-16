@@ -12,9 +12,15 @@
     });
   }
   function fig(text) {
-    if (text === "not entered" || text === "—") return '<span class="word">' + text + "</span>";
+    if (text === "not entered" || text === "not on file" || text === "—") return '<span class="word">' + text + "</span>";
     return '<span class="num">' + esc(text) + "</span>";
   }
+  // Square feet line for a job view or a raw invoice: "not on file" when absent/null. Never invented.
+  function sfTextOf(livingSF, underRoofSF) {
+    return "Living SF: " + calc.sfText(livingSF) + " · Under Roof SF: " + calc.sfText(underRoofSF);
+  }
+  function sfLineView(view) { return sfTextOf(view.livingSF, view.underRoofSF); }
+  function sfLineInv(inv) { return sfTextOf(inv && inv.livingSF, inv && inv.underRoofSF); }
   function moneyFig(n) { return fig(calc.money(n)); }
   function ratioFig(r) { return fig(calc.displayRatio(r)); }
   function parseDate(s) {
@@ -79,7 +85,7 @@
 
   function jobButton(view, model) {
     return '<button type="button" class="b-job' + (view.below ? " flagged" : "") + '" data-job="' + esc(view.id) + '">' +
-      '<span class="b-top"><span class="b-name">' + esc(view.name) + '</span><span class="b-meta">' + esc(metaLine(view)) + "</span></span>" +
+      '<span class="b-top"><span class="b-name">' + esc(view.name) + '</span><span class="b-meta">' + esc(metaLine(view)) + '</span><span class="b-sf">' + esc(sfLineView(view)) + "</span></span>" +
       '<span class="b-stats">' +
         statSpan("Budget", withNote(view.budgetText.text, view.budgetText.note)) +
         statSpan("Actual cost", moneyFig(view.actual)) +
@@ -132,7 +138,7 @@
       shown.map(function (j) {
         return '<tr class="' + (j.below ? "flagged" : "") + '"><td class="mark"></td><td>' +
           '<button type="button" class="linkish" data-job="' + esc(j.id) + '">' + esc(j.name) + "</button>" +
-          '<span class="hint">' + esc(metaLine(j)) + "</span></td><td>" + esc(j.divisionLabel) + "</td>" +
+          '<span class="hint">' + esc(metaLine(j)) + '</span><span class="hint">' + esc(sfLineView(j)) + "</span></td><td>" + esc(j.divisionLabel) + "</td>" +
           '<td class="r">' + withNote(j.budgetText.text, j.budgetText.note) + "</td>" +
           '<td class="r">' + moneyFig(j.actual) + "</td>" +
           '<td class="r">' + variHtml(j) + "</td>" +
@@ -224,6 +230,7 @@
       return '<div class="inv"><div class="i-top"><span class="i-no">#' + esc(row.number || "—") + '</span><span class="i-amt">' +
         moneyFig(calc.isNum(row.amount) ? row.amount : null) + "</span></div>" +
         '<div class="i-addr">' + esc(row.client || "") + (row.jobAddress ? " · " + esc(row.jobAddress) : "") + "</div>" +
+        '<div class="i-meta">' + esc(sfLineInv(row)) + "</div>" +
         '<div class="i-meta">' + esc(statusLabel(row)) + " · " + esc(matchLabel(m.via)) +
         (calc.isNum(row.retainage) && row.retainage > 0 ? " · Retainage " + esc(calc.money(row.retainage)) : "") + "</div></div>";
     }).join("");
@@ -244,6 +251,8 @@
         stat("Margin to date", ratioFig(view.marginToDate)) +
         stat("Houses on budget", fig(housesText(view.housesBudget))) +
         stat("Houses on job", fig(housesText(view.housesJob))) +
+        stat("Living SF", fig(calc.sfText(view.livingSF))) +
+        stat("Under Roof SF", fig(calc.sfText(view.underRoofSF))) +
         stat("Billed revenue", moneyFig(view.revenue)) +
       "</div></section>" +
       '<section class="panel"><h2>Budget and actual</h2>' +
@@ -300,6 +309,7 @@
         return '<div class="inv"><div class="i-top"><span class="i-no">#' + esc(row.number || "—") + '</span><span class="i-amt">' +
           moneyFig(calc.isNum(row.amount) ? row.amount : null) + "</span></div>" +
           '<div class="i-addr">' + esc(row.client || "") + (row.jobAddress ? " · " + esc(row.jobAddress) : "") + "</div>" +
+          '<div class="i-meta">' + esc(sfLineInv(row)) + "</div>" +
           '<div class="i-meta">' + (m.tied ? "Tied two jobs, left unmatched" : "No job matched") + "</div></div>";
       }).join("");
     }).join("");
