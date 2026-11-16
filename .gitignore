@@ -1,0 +1,4 @@
+# Plain finance data is never committed. Only finance-data.enc.json goes in git.
+finance-data.json
+*.plain.json
+.env
