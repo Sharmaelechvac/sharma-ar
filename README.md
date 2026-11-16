@@ -66,9 +66,11 @@ Projected margin = (contract price − budget) / contract price. Profit margin =
 
 Invoices match a job only when `trade` equals the job's division, and then only if the street address or the client name appears on that job. If two jobs tie, the invoice is left unmatched. The full rule is in `SCHEMA.md`.
 
-Invoice fields, exactly: `id`, `number`, `client`, `jobAddress`, `trade` (`electrical`|`hvac`),
+Invoice fields: `id`, `number`, `client`, `jobAddress`, `trade` (`electrical`|`hvac`|`null`),
 `amount` (number), `dateSent` (`YYYY-MM-DD`), `dueTerms` (integer days), `status`
 (`sent`|`paid`|`overdue`|`undelivered`), `datePaid` (`YYYY-MM-DD` or `null`), `retainage` (number, `0` if none).
+Optional: `description`, `warning` (text). `trade` may be `null` when the source invoice states no trade (not guessed).
+Optional top-level `warnings`, `handoffNotes`, and `unbilledDrafts` (unsent Jobber drafts — never counted in any AR total).
 
 **Example invoice — EXAMPLE SHAPE ONLY, NOT DATA:**
 

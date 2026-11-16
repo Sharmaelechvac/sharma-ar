@@ -75,8 +75,10 @@
           "trade": {
             "enum": [
               "electrical",
-              "hvac"
-            ]
+              "hvac",
+              null
+            ],
+            "description": "Lowercase. null = trade not stated on the source invoice (not guessed). Apps show no trade and keep it out of both divisions."
           },
           "amount": {
             "type": "number",
@@ -113,6 +115,14 @@
             "type": "number",
             "minimum": 0,
             "description": "Dollars held back by the builder on this invoice; 0 if none"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional. What the invoice is for, as written on it."
+          },
+          "warning": {
+            "type": "string",
+            "description": "Optional. Data-quality note from the reconcile (source conflict, draft in Jobber, etc.). Not a number."
           }
         }
       }
@@ -282,14 +292,21 @@
     "budgets": {
       "type": "object",
       "description": "Job budgets. Ships empty. One object per pnl.jobs[] row, linked by jobId. Lines are never blended across electrical and HVAC.",
-      "required": ["jobs"],
+      "required": [
+        "jobs"
+      ],
       "additionalProperties": false,
       "properties": {
         "jobs": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["jobId", "contractPrice", "houses", "lines"],
+            "required": [
+              "jobId",
+              "contractPrice",
+              "houses",
+              "lines"
+            ],
             "additionalProperties": false,
             "properties": {
               "jobId": {
@@ -297,11 +314,17 @@
                 "description": "pnl.jobs[].id. One budget per job id."
               },
               "contractPrice": {
-                "type": ["number", "null"],
+                "type": [
+                  "number",
+                  "null"
+                ],
                 "description": "Sold price for this job. null = not entered. Not the same as pnl.jobs[].revenue (billed to date)."
               },
               "houses": {
-                "type": ["integer", "null"],
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "minimum": 0,
                 "description": "Houses on the budget. null = not entered. The app does not copy pnl.jobs[].houses into this field."
               },
@@ -310,20 +333,40 @@
                 "description": "One row per division + phase + cost type. Omit a row, or set amount null, for not entered. 0 means budgeted zero. A site with both trades has two pnl jobs and two budgets; every line still names its division.",
                 "items": {
                   "type": "object",
-                  "required": ["division", "phase", "costType", "amount"],
+                  "required": [
+                    "division",
+                    "phase",
+                    "costType",
+                    "amount"
+                  ],
                   "additionalProperties": false,
                   "properties": {
                     "division": {
-                      "enum": ["electrical", "hvac"]
+                      "enum": [
+                        "electrical",
+                        "hvac"
+                      ]
                     },
                     "phase": {
-                      "enum": ["underground", "rough-in", "trim"]
+                      "enum": [
+                        "underground",
+                        "rough-in",
+                        "trim"
+                      ]
                     },
                     "costType": {
-                      "enum": ["material", "labor", "permit", "other"]
+                      "enum": [
+                        "material",
+                        "labor",
+                        "permit",
+                        "other"
+                      ]
                     },
                     "amount": {
-                      "type": ["number", "null"],
+                      "type": [
+                        "number",
+                        "null"
+                      ],
                       "description": "Budget dollars. null = not entered. Never stored as a blended electrical+HVAC figure."
                     }
                   }
@@ -333,6 +376,24 @@
           }
         }
       }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional. Reconcile warnings for Sanjay/Kevin. Text only."
+    },
+    "handoffNotes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional. Notes from whoever prepared the data."
+    },
+    "unbilledDrafts": {
+      "type": "object",
+      "description": "Optional. Unsent Jobber drafts (unbilled pipeline). NOT receivables: never counted in any AR, P&L or Budget total. No app reads it."
     }
   },
   "$defs": {

@@ -59,7 +59,7 @@ Files in this folder:
 | meta.currency | string | `"USD"` |
 | meta.updatedBy | string | Who last edited, e.g. `"Jarvis"`. |
 
-## invoices[] — exactly these 11 fields
+## invoices[] — these 11 fields (plus optional `description`, `warning`)
 
 | Field | Type | Rule |
 |---|---|---|
@@ -67,13 +67,17 @@ Files in this folder:
 | number | string | Invoice number as printed (string, keeps leading zeros). |
 | client | string | Builder/client. Spell it the same every time — it is the grouping key. |
 | jobAddress | string | Street address of the job. |
-| trade | `"electrical"` \| `"hvac"` | Lowercase. |
+| trade | `"electrical"` \| `"hvac"` \| null | Lowercase. null = trade not stated on the source invoice (never guessed); counts in AR totals, in neither division. |
 | amount | number | Invoice total in dollars, retainage included. No `$`, no commas. |
 | dateSent | `"YYYY-MM-DD"` \| null | Date the invoice went to the client. null only for `undelivered` not yet sent. |
 | dueTerms | integer | Net days. `30` = Net 30. `0` = due on receipt. |
 | status | `"sent"` \| `"paid"` \| `"overdue"` \| `"undelivered"` | See status rules. |
 | datePaid | `"YYYY-MM-DD"` \| null | Required when status is `paid`, else null. |
 | retainage | number | Dollars the builder is holding on this invoice. `0` if none. |
+| description | string (optional) | What the invoice is for. |
+| warning | string (optional) | Reconcile note (source conflict, Jobber draft, etc.). Text only. |
+
+Optional top-level sections (no app reads them for numbers): `warnings` (strings), `handoffNotes` (strings), `unbilledDrafts` (object: unsent Jobber drafts — unbilled pipeline, **never** counted in any AR, P&L or Budget total).
 
 ### Status and math rules (both apps use these)
 
