@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff">
+<title>Sharma AR · Accounts Receivable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <img class="logo" src="assets/logo.png" alt="Sharma Electric &amp; HVAC" width="900" height="193">
+    <div class="app-name">Accounts Receivable</div>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <p class="asof" id="asof">Loading finance-data.json…</p>
+
+  <section class="panel" aria-labelledby="h-money">
+    <h2 id="h-money">Money owed to us</h2>
+    <div class="tiles">
+      <div class="tile">
+        <div class="t-label">Total outstanding</div>
+        <div class="t-num" id="t-out">$0</div>
+        <div class="t-sub" id="t-out-sub">0 invoices</div>
+      </div>
+      <div class="tile tile-over">
+        <div class="t-label">Overdue</div>
+        <div class="t-num" id="t-over">$0</div>
+        <div class="t-sub" id="t-over-sub">0 invoices</div>
+      </div>
+      <div class="tile">
+        <div class="t-label">Retainage held</div>
+        <div class="t-num" id="t-ret">$0</div>
+        <div class="t-sub">Part of outstanding</div>
+      </div>
+      <div class="tile">
+        <div class="t-label">Not delivered</div>
+        <div class="t-num" id="t-und">$0</div>
+        <div class="t-sub" id="t-und-sub">0 invoices</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-aging">
+    <h2 id="h-aging">Aging</h2>
+    <p class="note">Days since the invoice was sent. Unpaid invoices only.</p>
+    <div class="bar" id="aging-bar" aria-hidden="true"></div>
+    <table class="aging" id="aging">
+      <thead><tr><th scope="col">Days</th><th scope="col" class="r">Invoices</th><th scope="col" class="r">Amount</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="panel" aria-labelledby="h-clients">
+    <h2 id="h-clients">By builder</h2>
+    <div class="tools">
+      <button type="button" class="btn" id="expand-all">Open all</button>
+      <button type="button" class="btn" id="collapse-all">Close all</button>
+    </div>
+    <div id="clients"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-paid">
+    <h2 id="h-paid">Paid</h2>
+    <div id="paid"></div>
+  </section>
+
+  <footer class="foot">
+    Sharma Electric &amp; HVAC · Lic. EC13013924 · CAC1823596<br>
+    Numbers come from <span class="mono">finance-data.json</span>. Edit that file, not this page.
+  </footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
