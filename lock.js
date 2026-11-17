@@ -1,4 +1,4 @@
-/* Sharma passcode lock — shared by Sharma AR, Sharma Budget, and Sharma P&L.
+/* Sharma passcode lock — shared by every tab of Sharma Finance (AR, P&L, Budget, Collections).
    The finance data is published only as finance-data.enc.json (AES-GCM 256, key from
    PBKDF2-SHA256). This file asks for the code, derives the key in the browser with WebCrypto,
    and decrypts. Only the derived key is kept, in sessionStorage (this tab only). The code
@@ -54,12 +54,15 @@
     var path = (location.pathname || "").toLowerCase();
     // /sharma-ar/budget/ must be Budget, not AR. Check it first.
     if (path.indexOf("/budget") !== -1) return "Sharma Budget";
+    if (path.indexOf("/sharma-ar/pnl") !== -1) return "Sharma P&L";
+    if (path.indexOf("/collections") !== -1) return "Sharma Collections";
     if (path.indexOf("/sharma-ar") !== -1) return "Sharma AR";
     if (path.indexOf("/sharma-pnl") !== -1) return "Sharma P&L";
     var n = (opts && opts.appName) || "";
     if (/budget/i.test(n)) return "Sharma Budget";
     if (/receivable/i.test(n)) return "Sharma AR";
     if (/p\s*&?\s*l/i.test(n)) return "Sharma P&L";
+    if (/collection/i.test(n)) return "Sharma Collections";
     return n || "Sharma finance app";
   }
   function failCount(opts) {
