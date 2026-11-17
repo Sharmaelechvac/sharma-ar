@@ -112,11 +112,22 @@
       '<div class="i-meta">' + meta.join(" · ") + "</div>" + flag(inv) + "</div>";
   }
 
+  var DATA = null;
+  var VIEW = "total"; // "total" | "electrical" | "hvac" — separate ELEC & HVAC money, plus a Total tab (Sanjay, 2026-11-17)
+
   function render(data, loadError) {
     var T = today();
     var meta = data && data.meta && typeof data.meta === "object" ? data.meta : {};
     var list = data && Array.isArray(data.invoices) ? data.invoices : [];
     var invs = list.map(function (r, i) { return normalize(r, i, T); });
+    // Trade filter for the active tab. Invoices with no trade stay on Total only.
+    if (VIEW === "electrical") invs = invs.filter(function (x) { return x.trade === "Electrical"; });
+    else if (VIEW === "hvac") invs = invs.filter(function (x) { return x.trade === "HVAC"; });
+    document.querySelectorAll("#tabs .tab").forEach(function (b) {
+      var on = b.getAttribute("data-view") === VIEW;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
     var open = invs.filter(function (x) { return !x.isPaid; });
     var paid = invs.filter(function (x) { return x.isPaid; });
     var over = open.filter(function (x) { return x.isOver; });
@@ -221,6 +232,12 @@
     var ch = btn.querySelector(".chev"); if (ch) ch.textContent = open ? "−" : "+";
   }
   document.addEventListener("click", function (e) {
+    var tab = e.target.closest ? e.target.closest("#tabs .tab") : null;
+    if (tab) {
+      var v = tab.getAttribute("data-view");
+      if (v && v !== VIEW) { VIEW = v; if (DATA) render(DATA, null); }
+      return;
+    }
     var btn = e.target.closest ? e.target.closest(".c-head") : null;
     if (btn) { setOpen(btn, btn.getAttribute("aria-expanded") !== "true"); return; }
     if (e.target.id === "expand-all" || e.target.id === "collapse-all") {
@@ -231,6 +248,6 @@
 
   render({}, null);
   window.SharmaLock.load(DATA_URL, { appName: "Accounts Receivable", logo: "assets/logo.png" })
-    .then(function (d) { render(d, null); })
+    .then(function (d) { DATA = d; render(d, null); })
     .catch(function (err) { render({}, err && err.message ? err.message : "unknown error"); });
 })();
