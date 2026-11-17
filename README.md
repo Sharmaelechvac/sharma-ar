@@ -1,13 +1,19 @@
-# Sharma AR and Budget
+# Sharma Finance (AR · P&L · Budget · Collections)
 
-Phone-first books for Sharma Electric & HVAC. Front end only. **All numbers come from the shared finance file**, published encrypted as `finance-data.enc.json` and unlocked with the office code. Nothing is typed into the code.
+One phone-first app for Sharma Electric & HVAC, one code screen, four tabs. Front end only. **All numbers come from the shared finance file**, published encrypted as `finance-data.enc.json` and unlocked with the office code. Nothing is typed into the code. Unlock once; the key is kept for this browser tab, so switching tabs does not ask again.
 
-- **AR** — what every builder owes us, what is overdue, and how old it is.
-  Live: `https://sharmaelechvac.github.io/sharma-ar/`
-- **Budget** — budget vs actual, line by line, for each job.
-  Live: `https://sharmaelechvac.github.io/sharma-ar/budget/`
-- **P&L** — profit by job, in the other repo.
-  Live: `https://sharmaelechvac.github.io/sharma-pnl/`
+Live: `https://sharmaelechvac.github.io/sharma-ar/`
+
+| Tab | Path | Reads |
+|---|---|---|
+| **AR** — what every builder owes us, overdue, aging | `/sharma-ar/` | `meta`, `invoices` |
+| **P&L** — profit by job (moved here from the `sharma-pnl` repo, 2026-11-17) | `/sharma-ar/pnl/` | `meta`, `pnl` |
+| **Budget** — budget vs actual by job | `/sharma-ar/budget/` | `meta`, `pnl.jobs`, `invoices`, `budgets` |
+| **Collections** — follow up today / overdue, notes, tap-to-call/email, crew links, We owe | `/sharma-ar/collections/` | `meta`, `invoices`, `collections` |
+
+Old links: `https://sharmaelechvac.github.io/sharma-pnl/` redirects to the P&L tab. `/sharma-ar/#pnl`, `#budget`, `#collections` open those tabs. The old Collections worker app is no longer on Sharma Home; its data was folded into the `collections` section on 2026-11-17 (it had 0 invoices and 5 We owe rows).
+
+`shell.css` is the shared header + tab bar. Each tab keeps its own logic and look.
 
 ## Files
 
@@ -23,7 +29,10 @@ Phone-first books for Sharma Electric & HVAC. Front end only. **All numbers come
 | `SCHEMA.md` | Field-by-field rules for the data file |
 | `finance-data.schema.json` | JSON Schema to validate the data file |
 | `assets/logo.png` | Real Sharma Electric & HVAC horizontal logo (same art as the ACH sheet) |
-| `budget/` | Budget-by-job app (list, job detail, totals by division) |
+| `budget/` | Budget tab (list, job detail, totals by division) |
+| `pnl/` | P&L tab (code moved from `sharma-pnl`, same logic and look; same fonts, loaded like the other tabs) |
+| `collections/` | Collections tab (follow-ups, notes, contacts, crew links, We owe) |
+| `shell.css` | Shared Sharma Finance header and tab bar |
 | `budget/finance-data.example.json` | Fake jobs for screenshots and tests. The published app does not load it. |
 
 ## Where the data lives

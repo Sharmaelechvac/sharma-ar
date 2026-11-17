@@ -125,12 +125,18 @@
             "description": "Optional. Data-quality note from the reconcile (source conflict, draft in Jobber, etc.). Not a number."
           },
           "livingSF": {
-            "type": ["integer", "null"],
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 0,
             "description": "Optional. Living square feet of the house on this invoice. null or absent = not on file; apps show 'not on file' and never invent a figure."
           },
           "underRoofSF": {
-            "type": ["integer", "null"],
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 0,
             "description": "Optional. Under-roof square feet of the house on this invoice. null or absent = not on file; apps show 'not on file' and never invent a figure."
           }
@@ -250,12 +256,18 @@
                 ]
               },
               "livingSF": {
-                "type": ["integer", "null"],
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "minimum": 0,
                 "description": "Optional. Living square feet of the house on this job. null or absent = not on file; apps show 'not on file' and never invent a figure."
               },
               "underRoofSF": {
-                "type": ["integer", "null"],
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "minimum": 0,
                 "description": "Optional. Under-roof square feet of the house on this job. null or absent = not on file; apps show 'not on file' and never invent a figure."
               },
@@ -349,12 +361,18 @@
                 "description": "Houses on the budget. null = not entered. The app does not copy pnl.jobs[].houses into this field."
               },
               "livingSF": {
-                "type": ["integer", "null"],
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "minimum": 0,
                 "description": "Optional. Living square feet of the house on this budget. null or absent = not on file; apps show 'not on file' and never invent a figure."
               },
               "underRoofSF": {
-                "type": ["integer", "null"],
+                "type": [
+                  "integer",
+                  "null"
+                ],
                 "minimum": 0,
                 "description": "Optional. Under-roof square feet of the house on this budget. null or absent = not on file; apps show 'not on file' and never invent a figure."
               },
@@ -424,6 +442,204 @@
     "unbilledDrafts": {
       "type": "object",
       "description": "Optional. Unsent Jobber drafts (unbilled pipeline). NOT receivables: never counted in any AR, P&L or Budget total. No app reads it."
+    },
+    "collections": {
+      "type": "object",
+      "description": "Optional. Follow-up info folded in from the old Collections app. Never changes an invoice amount; the app shows any difference as a mismatch.",
+      "required": [
+        "invoices",
+        "weOwe"
+      ],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "exportedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+        },
+        "invoices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "number",
+              "client"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "number": {
+                "type": "string"
+              },
+              "client": {
+                "type": "string"
+              },
+              "job": {
+                "type": "string"
+              },
+              "jobAddress": {
+                "type": "string"
+              },
+              "amount": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "invoiceDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+              },
+              "dueDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+              },
+              "status": {
+                "type": "string"
+              },
+              "followUpDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+              },
+              "contactPhone": {
+                "type": "string"
+              },
+              "contactEmail": {
+                "type": "string"
+              },
+              "crewLink": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "body"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "date": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+                    },
+                    "body": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "payments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "amount"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "date": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+                    },
+                    "amount": {
+                      "type": "number"
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "matchedInvoiceId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "weOwe": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "vendor",
+              "amount"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "vendor": {
+                "type": "string"
+              },
+              "amount": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string"
+              },
+              "asOf": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "crewLinks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "client",
+              "url"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "client": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "pattern": "^https://"
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     }
   },
   "$defs": {

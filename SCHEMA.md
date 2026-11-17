@@ -1,10 +1,11 @@
 # finance-data.json — shared schema (v1)
 
-One file feeds all three Sharma apps:
+One file feeds Sharma Finance (one app, four tabs: AR, P&L, Budget, Collections):
 
-- **Sharma AR** (`sharma-ar`) reads `meta` + `invoices`.
-- **Sharma P&L** (`sharma-pnl`) reads `meta` + `pnl` (and may read `invoices` for a "billed this month" cross-check).
-- **Sharma Budget** (`sharma-ar/budget/`) reads `meta` + `pnl.jobs` + `invoices` + `budgets`. Actual cost comes from `pnl.jobs`. Billed, paid, outstanding, and retainage come from `invoices` matched to the job (rule below). Budget dollars come only from `budgets`.
+- **AR tab** (`sharma-ar/`) reads `meta` + `invoices`.
+- **P&L tab** (`sharma-ar/pnl/`; the old `sharma-pnl` link redirects here) reads `meta` + `pnl` (and may read `invoices` for a "billed this month" cross-check).
+- **Budget tab** (`sharma-ar/budget/`) reads `meta` + `pnl.jobs` + `invoices` + `budgets`. Actual cost comes from `pnl.jobs`. Billed, paid, outstanding, and retainage come from `invoices` matched to the job (rule below). Budget dollars come only from `budgets`.
+- **Collections tab** (`sharma-ar/collections/`) reads `meta` + `invoices` + `collections` (optional, below).
 
 Nobody types a number twice. Jarvis edits only this JSON. The apps never hold numbers in code.
 
@@ -80,6 +81,38 @@ Files in this folder:
 | underRoofSF | integer \| null (optional) | Under-roof square feet of the house. May be absent. Absent or null = not on file; apps show "not on file" and never invent a figure. |
 
 Optional top-level sections (no app reads them for numbers): `warnings` (strings), `handoffNotes` (strings), `unbilledDrafts` (object: unsent Jobber drafts — unbilled pipeline, **never** counted in any AR, P&L or Budget total).
+
+## collections — optional (Collections tab of Sharma Finance)
+
+Folded in from the old Collections app (`sharma-collections`) on 2026-11-17. The Collections tab reads it
+together with `invoices`. It never changes an invoice number or amount.
+
+```json
+"collections": {
+  "source": "", "exportedAt": "YYYY-MM-DD",
+  "invoices": [], "weOwe": [], "crewLinks": [], "notes": []
+}
+```
+
+| Field | Type | Rule |
+|---|---|---|
+| invoices[].number | string | Invoice number as printed. Matched to `invoices[]` by `number` + `client`. |
+| invoices[].client | string | Builder, spelled like `invoices[].client` when it is the same invoice. |
+| invoices[].job, jobAddress | string | As typed in Collections. |
+| invoices[].amount | number \| null | Amount Collections had. If it differs from the matching `invoices[].amount`, the tab shows a **Mismatch** line. It is never copied over. |
+| invoices[].invoiceDate, dueDate, followUpDate | `YYYY-MM-DD` \| null | `followUpDate` drives the "Follow up today / overdue" list. |
+| invoices[].status | string | Collections status (Open, Partial, Paid, Disputed). Shown only; AR status rules still come from `invoices[]`. |
+| invoices[].contactPhone, contactEmail | string | Tap-to-call / tap-to-email links. Empty = not on file. |
+| invoices[].crewLink | string | Crew app link for the job. |
+| invoices[].notes[] | `{date, body}` | Follow-up notes, newest last. |
+| invoices[].payments[] | `{date, amount, note}` | Payment log from Collections. |
+| invoices[].matchedInvoiceId | string \| null | `invoices[].id` it belongs to, or null = only in Collections (shown as-is, never added to AR totals). |
+| weOwe[] | `{vendor, amount, status, asOf, note}` | What we owe vendors and others. Copied as-is. Not part of AR, P&L or Budget. |
+| crewLinks[] | `{client, url}` | Crew app per builder (from Sharma Home). Used when an invoice has no `crewLink`. |
+| notes[] | strings | Where the data came from. |
+
+Follow-up list rule: an unpaid invoice is listed when its `followUpDate` is today or earlier, or when it is
+overdue by the AR rules below. Nothing is guessed: no follow-up date means it is listed only if overdue.
 
 ### Status and math rules (both apps use these)
 
