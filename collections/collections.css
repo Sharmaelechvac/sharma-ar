@@ -1,0 +1,28 @@
+/* Collections tab — extras on top of ../styles.css */
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.act{display:inline-flex;align-items:center;justify-content:center;min-height:48px;min-width:96px;padding:0 14px;font:700 16px/1 var(--head);letter-spacing:.03em;text-transform:uppercase;color:var(--navy);background:var(--white);border:1.5px solid var(--navy);border-radius:4px;text-decoration:none}
+.act.primary{background:var(--navy);color:var(--white)}
+.act:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.nofile{margin-top:8px;font-size:16px;color:var(--gray)}
+.cnotes{margin:10px 0 0;padding:0;list-style:none}
+.cnotes li{margin:0 0 6px;padding:8px 10px;background:var(--bg);border-radius:4px;font-size:16px}
+.cnotes .d{font-family:var(--mono);font-weight:600;color:var(--gray);margin-right:6px}
+.paylog{margin-top:8px;font-size:16px;color:var(--gray)}
+.paylog .num{color:var(--ink)}
+.flag-fu{background:var(--gold);color:var(--ink)}
+.flag-mis{background:var(--white);color:var(--ink);border:2px solid var(--gold)}
+.okline{margin:0;padding:12px;border:1px solid var(--line);border-left:6px solid var(--navy);border-radius:4px;font-size:16px}
+.mis{padding:12px;border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:4px;margin-bottom:10px;font-size:16px}
+.owe-total{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:12px;border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:4px;margin-bottom:12px}
+.owe-total .k{font:700 16px/1.1 var(--head);color:var(--gray);text-transform:uppercase;letter-spacing:.04em}
+.owe-total .v{font:600 26px/1.2 var(--mono);color:var(--dnavy)}
+.owe{border:1px solid var(--line);border-radius:4px;margin-bottom:10px;padding:12px}
+.owe .o-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.owe .o-name{font:700 18px/1.2 var(--head);color:var(--dnavy)}
+.owe .o-amt{font:600 18px var(--mono);color:var(--ink);white-space:nowrap}
+.owe .o-st{margin-top:6px;font-size:16px;color:var(--ink)}
+.owe .o-asof{margin-top:2px;font-size:16px;color:var(--gray)}
+.owe details{margin-top:8px}
+.owe summary{display:flex;align-items:center;min-height:48px;font:700 16px var(--head);color:var(--navy);text-transform:uppercase;letter-spacing:.03em;cursor:pointer}
+.owe details p{margin:0;font-size:16px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.tag-personal{display:inline-block;margin-left:6px;padding:2px 6px;border:1px solid var(--dnavy);border-radius:3px;font:700 16px/1.1 var(--head);color:var(--dnavy);vertical-align:2px}
