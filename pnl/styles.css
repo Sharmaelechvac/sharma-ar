@@ -3,7 +3,7 @@
 :root{
   --navy:#264387;--dnavy:#1a2f61;--gold:#F0A846;--ink:#1d2433;--gray:#5b6478;--line:#dfe4ee;--bg:#f4f6fb;--white:#fff;
   --r:4px;
-  --head:'Barlow Semi Condensed',Arial Narrow,Arial,sans-serif;
+  --head:'-apple-system','SF Pro Display',Inter,'Segoe UI',sans-serif;
   --body:'Inter',-apple-system,Segoe UI,Arial,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
 }

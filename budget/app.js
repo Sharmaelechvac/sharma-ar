@@ -371,7 +371,7 @@
   function bootLive() {
     state.example = false;
     if (!window.SharmaLock) { fail(new Error("The lock did not load.")); return; }
-    window.SharmaLock.load(calc.LIVE_FILE, { appName: "Sharma Finance", logo: "../assets/logo.png" })
+    window.SharmaLock.load(calc.LIVE_FILE, { appName: "Sharma Finance", logo: "https://sharma-kit.sharma-crew.workers.dev/assets/logo.png" })
       .then(showData)
       .catch(fail);
   }

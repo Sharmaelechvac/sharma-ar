@@ -60,7 +60,7 @@ const DEFAULT_MARGIN_FLOOR = 0.25;
     return r.json();
   }
   async function load() {
-    try { DATA = await window.SharmaLock.load(DATA_URL, { appName: "Sharma Finance", logo: "../assets/logo.png" }); SOURCE = new URL(DATA_URL, location.href).href; }
+    try { DATA = await window.SharmaLock.load(DATA_URL, { appName: "Sharma Finance", logo: "https://sharma-kit.sharma-crew.workers.dev/assets/logo.png" }); SOURCE = new URL(DATA_URL, location.href).href; }
     catch (e1) { return showError(e1); }
     const p = (DATA && DATA.pnl) || {};
     FLOOR = isNum(p.marginFloor) ? p.marginFloor : DEFAULT_MARGIN_FLOOR;

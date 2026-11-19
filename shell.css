@@ -2,15 +2,15 @@
 .fin-top{background:#fff;border-bottom:3px solid #F0A846}
 .fin-top-in{max-width:760px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px}
 .fin-logo{display:block;height:44px;width:auto;max-width:60%}
-.fin-name{font:700 18px/1.1 "Barlow Semi Condensed",Arial Narrow,Arial,sans-serif;color:#1a2f61;text-align:right;text-transform:uppercase;letter-spacing:.04em}
+.fin-name{font:700 18px/1.1 "-apple-system","SF Pro Display",Inter,"Segoe UI",sans-serif;color:#1a2f61;text-align:right;text-transform:uppercase;letter-spacing:.04em}
 .fin-tabs{position:sticky;top:0;z-index:20;display:flex;padding:0 max(0px,calc((100% - 760px) / 2));background:#fff;border-bottom:1px solid #dfe4ee;box-shadow:0 1px 0 rgba(0,0,0,.03)}
-.fin-tabs a{flex:1;min-width:0;min-height:52px;display:flex;align-items:center;justify-content:center;padding:6px 4px;font:700 17px/1.1 "Barlow Semi Condensed",Arial Narrow,Arial,sans-serif;color:#264387;text-decoration:none;text-transform:uppercase;letter-spacing:.02em;border-bottom:4px solid transparent;text-align:center}
+.fin-tabs a{flex:1;min-width:0;min-height:52px;display:flex;align-items:center;justify-content:center;padding:6px 4px;font:700 17px/1.1 "-apple-system","SF Pro Display",Inter,"Segoe UI",sans-serif;color:#264387;text-decoration:none;text-transform:uppercase;letter-spacing:.02em;border-bottom:4px solid transparent;text-align:center}
 .fin-tabs a[aria-current="page"]{color:#1a2f61;background:#f4f6fb;border-bottom-color:#F0A846}
 .fin-tabs a:focus-visible{outline:3px solid #F0A846;outline-offset:-3px}
 @media (max-width:420px){.fin-tabs a{font-size:16px;letter-spacing:0;padding:6px 2px}.fin-tabs a.wide{flex:1.35}}
 @media (min-width:600px){.fin-logo{height:48px}.fin-name{font-size:20px}.fin-tabs a{font-size:18px;letter-spacing:.04em}}
 @media print{.fin-tabs{display:none}}
-.tab-title{font:700 26px/1.15 "Barlow Semi Condensed",Arial Narrow,Arial,sans-serif;color:#1a2f61;margin:16px 0 4px}
+.tab-title{font:700 26px/1.15 "-apple-system","SF Pro Display",Inter,"Segoe UI",sans-serif;color:#1a2f61;margin:16px 0 4px}
 
 /* --- Sharma kit v1.2 rollout overrides (Batch A) --- */
 body.sk { font-family: -apple-system, "SF Pro Text", Inter, "Segoe UI", sans-serif; }

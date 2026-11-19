@@ -191,7 +191,7 @@ Phase actuals are not in the finance file, so those cells stay "not entered". Ma
 ## Design
 
 Sharma standard (Mark Cuban, Design, 11/15): navy #264387, dark navy #1a2f61, gold #F0A846,
-ink #1d2433, gray #5b6478, lines #dfe4ee, page #f4f6fb. Barlow Semi Condensed 700 headings,
+ink #1d2433, gray #5b6478, lines #dfe4ee, page #f4f6fb. kit display headings,
 Inter body, IBM Plex Mono numbers. White header, real logo, 3px gold line. No gradients,
 shadows, blur, emoji, pills or charts that don't track anything real.
 

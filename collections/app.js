@@ -205,7 +205,7 @@
   });
 
   render({}, null);
-  window.SharmaLock.load(DATA_URL, { appName: "Sharma Finance", logo: "../assets/logo.png" })
+  window.SharmaLock.load(DATA_URL, { appName: "Sharma Finance", logo: "https://sharma-kit.sharma-crew.workers.dev/assets/logo.png" })
     .then(function (d) { DATA = d || {}; render(DATA, null); })
     .catch(function (err) { render({}, err && err.message ? err.message : "unknown error"); });
 })();
