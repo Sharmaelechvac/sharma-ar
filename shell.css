@@ -11,3 +11,10 @@
 @media (min-width:600px){.fin-logo{height:48px}.fin-name{font-size:20px}.fin-tabs a{font-size:18px;letter-spacing:.04em}}
 @media print{.fin-tabs{display:none}}
 .tab-title{font:700 26px/1.15 "Barlow Semi Condensed",Arial Narrow,Arial,sans-serif;color:#1a2f61;margin:16px 0 4px}
+
+/* --- Sharma kit v1.2 rollout overrides (Batch A) --- */
+body.sk { font-family: -apple-system, "SF Pro Text", Inter, "Segoe UI", sans-serif; }
+.fin-tabs { display: flex; gap: 6px; padding: 10px 16px 0; max-width: 1180px; margin: 0 auto; }
+.fin-tabs a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line, #dfe4ee); background: #fff; font-weight: 700; font-size: 15px; color: var(--ink, #1d2433); text-decoration: none; }
+.fin-tabs a[aria-current="page"] { background: #264387; color: #fff; border-color: #264387; }
+.money, .num, td.n, th.n, .amt { font-variant-numeric: tabular-nums; }

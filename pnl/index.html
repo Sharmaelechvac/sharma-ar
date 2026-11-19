@@ -1,25 +1,30 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="sk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
 <meta name="robots" content="noindex, nofollow">
-<title>Sharma Finance · P&amp;L</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;600;700&display=swap">
+<meta name="theme-color" content="#264387">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Finance">
+<title>Sharma Finance · P&L</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="https://sharma-kit.sharma-crew.workers.dev/assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sharma-kit.sharma-crew.workers.dev/assets/favicon-32.png">
+<link rel="stylesheet" href="https://sharma-kit.sharma-crew.workers.dev/sharma-kit.css">
 <link rel="stylesheet" href="styles.css?v=1">
 <link rel="stylesheet" href="../shell.css?v=1">
-<style>#app{padding-top:14px}</style>
+<script src="https://sharma-kit.sharma-crew.workers.dev/sharma-kit.js" defer></script>
 </head>
-<body>
-<header class="fin-top">
-  <div class="fin-top-in">
-    <img class="fin-logo" src="../assets/logo.png" alt="Sharma Electric &amp; HVAC" width="900" height="193">
-    <div class="fin-name">Sharma Finance</div>
-  </div>
-</header>
+<body class="sk">
+<header class="sk-header"><div class="sk-header__bar">
+  <div class="sk-header__lead"><a class="sk-header__logo" href="../"><img src="https://sharma-kit.sharma-crew.workers.dev/assets/logo-white-header.png" alt="Sharma Electric &amp; HVAC" width="103" height="20"></a></div>
+  <div class="sk-header__title">Finance</div>
+  <div class="sk-header__trail"></div>
+</div></header>
+<div class="sk-offline"></div>
 <nav class="fin-tabs" aria-label="Sharma Finance">
   <a href="../">AR</a>
   <a href="../pnl/" aria-current="page">P&amp;L</a>
@@ -34,5 +39,6 @@
 <footer class="wrap foot" id="foot"></footer>
 <script src="../lock.js"></script>
 <script src="app.js?v=1"></script>
+<script>if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) { addEventListener("load", function(){ navigator.serviceWorker.register("../sw.js?kit=https://sharma-kit.sharma-crew.workers.dev").catch(function(){}); }); }</script>
 </body>
 </html>
