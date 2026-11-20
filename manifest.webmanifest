@@ -1,7 +1,7 @@
 {
   "name": "Sharma Finance · Sharma Electric & HVAC",
   "short_name": "Finance",
-  "description": "AR, P&L, budget and collections for Sharma Electric & HVAC.",
+  "description": "AR, P&L, budget, collections and material costs for Sharma Electric & HVAC.",
   "id": "/sharma-ar/",
   "start_url": "/sharma-ar/?source=homescreen",
   "scope": "/sharma-ar/",

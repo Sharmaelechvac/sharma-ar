@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" class="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#264387">
+  <meta name="color-scheme" content="light">
+  <script>(function(){try{if(localStorage.getItem("sk-scheme")==="dark"){var d=document.documentElement;d.setAttribute("data-scheme","dark");var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=d.getAttribute("data-theme")==="track"?"#1C1C1E":"#1a2f61"}}catch(e){}})()</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Finance">
+<title>Sharma Finance · Material Costs</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="https://sharma-kit.sharma-crew.workers.dev/assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://sharma-kit.sharma-crew.workers.dev/assets/favicon-32.png">
+<link rel="stylesheet" href="https://sharma-kit.sharma-crew.workers.dev/sharma-kit.css">
+<link rel="stylesheet" href="../shell.css?v=2">
+<link rel="stylesheet" href="materials.css?v=1">
+<script src="https://sharma-kit.sharma-crew.workers.dev/sharma-kit.js" defer></script>
+</head>
+<body class="sk">
+<header class="sk-header"><div class="sk-header__bar">
+  <div class="sk-header__lead"><a class="sk-header__logo" href="../"><img src="https://sharma-kit.sharma-crew.workers.dev/assets/logo-white-header.png" alt="Sharma Electric &amp; HVAC" width="103" height="20"></a></div>
+  <div class="sk-header__title">Finance</div>
+  <div class="sk-header__trail"></div>
+</div></header>
+<div class="sk-offline"></div>
+<nav class="fin-tabs" aria-label="Sharma Finance">
+  <a href="../">AR</a>
+  <a href="../pnl/">P&amp;L</a>
+  <a href="../budget/">Budget</a>
+  <a href="../collections/" class="wide">Collections</a>
+  <a href="./" class="wide" aria-current="page">Materials</a>
+  <a href="../more/">More</a>
+</nav>
+
+<main class="wrap" id="app" hidden>
+  <h1 class="tab-title">Material Costs</h1>
+  <p class="note">Prices we pay our distributors — never web or list prices. Electrical and HVAC stay separate; the trade switch only filters, it never blends the numbers.</p>
+
+  <section class="stats c4" id="stats" aria-label="Key numbers"></section>
+  <p class="asof-line" id="asof"></p>
+
+  <section class="panel">
+    <h2>Prices we pay</h2>
+    <div class="controls">
+      <div class="seg" id="seg" role="group" aria-label="Trade">
+        <button type="button" class="seg-btn" data-t="all">All</button>
+        <button type="button" class="seg-btn" data-t="electrical">Electrical</button>
+        <button type="button" class="seg-btn" data-t="hvac">HVAC</button>
+      </div>
+      <div class="ctl-row">
+        <input id="q" type="search" placeholder="Search wire, breakers, boxes…" aria-label="Search items">
+        <select id="sort" aria-label="Sort items">
+          <option value="name">Name</option>
+          <option value="price">Price</option>
+          <option value="updated">Newest first</option>
+          <option value="change">Biggest change</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+      </div>
+      <div class="views" id="views" role="group" aria-label="Change how items are shown">
+        <span class="views-lab">View</span>
+        <button type="button" class="view-btn" data-view="cards">Photos</button>
+        <button type="button" class="view-btn" data-view="list">List</button>
+        <button type="button" class="view-btn" data-view="sheet">Sheet</button>
+        <button type="button" class="view-btn" data-view="supplier">By supplier</button>
+      </div>
+      <div class="cats" id="cats"></div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div id="items"><div class="sk-skel" style="height:96px;margin-bottom:10px"></div><div class="sk-skel" style="height:96px;margin-bottom:10px"></div><div class="sk-skel" style="height:96px"></div></div>
+    <div id="sheet" hidden></div>
+  </section>
+
+  <p class="foot">Every price here is a price we pay a distributor, from the office price tracker. Prices older than 45 days are marked for a re-check — check before you quote. Sharma Electric &amp; HVAC · Lic. EC13013924 · CAC1823596</p>
+</main>
+<script src="../lock.js"></script>
+<script src="app.js?v=1"></script>
+<script>if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) { addEventListener("load", function(){ navigator.serviceWorker.register("../sw.js?kit=https://sharma-kit.sharma-crew.workers.dev", { scope: "/sharma-ar/" }).catch(function(){}); }); }</script>
+</body>
+</html>

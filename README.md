@@ -1,6 +1,6 @@
-# Sharma Finance (AR · P&L · Budget · Collections)
+# Sharma Finance (AR · P&L · Budget · Collections · Material Costs)
 
-One phone-first app for Sharma Electric & HVAC, one code screen, four tabs. Front end only. **All numbers come from the shared finance file**, published encrypted as `finance-data.enc.json` and unlocked with the office code. Nothing is typed into the code. Unlock once; the key is kept for this browser tab, so switching tabs does not ask again.
+One phone-first app for Sharma Electric & HVAC, one code screen, five tabs. Front end only. **Owner-only**: everything sits behind the office code, and no figure from this app renders anywhere else (the single exception is the counts-only feed below). **All numbers come from the shared finance file**, published encrypted as `finance-data.enc.json` and unlocked with the office code. Nothing is typed into the code. Unlock once per data file; the derived keys are kept per file for this browser tab, so switching tabs does not ask again.
 
 Live: `https://sharmaelechvac.github.io/sharma-ar/`
 
@@ -10,6 +10,29 @@ Live: `https://sharmaelechvac.github.io/sharma-ar/`
 | **P&L** — profit by job (moved here from the `sharma-pnl` repo, 2026-11-17) | `/sharma-ar/pnl/` | `meta`, `pnl` |
 | **Budget** — budget vs actual by job | `/sharma-ar/budget/` | `meta`, `pnl.jobs`, `invoices`, `budgets` |
 | **Collections** — follow up today / overdue, notes, tap-to-call/email, crew links, We owe | `/sharma-ar/collections/` | `meta`, `invoices`, `collections` |
+| **Material Costs** — distributor prices we pay, photo catalog, re-check list (added 2026-11-20, lean plan app 3) | `/sharma-ar/materials/` | the Material Pricing app's `prices.enc.json` + `photos.json`, read from that app — see below |
+
+## Material Costs data — one source, read from the pricing app
+
+The Materials tab does **not** keep a copy of any price. It fetches the same
+encrypted `prices.enc.json` the Material Pricing app publishes
+(`https://sharmaelechvac.github.io/sharma-material-pricing/prices.enc.json`,
+same office code, same `sharma-enc-v1` envelope) plus that app's public
+`photos.json`/`img/`, and renders them inside Finance. Price updates keep
+flowing through the price tracker → `sharma-material-pricing` publish; this
+tab picks them up on the next load. Headline tiles are counts only — no
+money-sum tiles, and no per-house cost rollup. The standalone Material
+Pricing app stays live for now; retiring it is a separate drop decision.
+
+## The one outward feed: `finance-counts.json`
+
+`finance-counts.json` (repo root, public) holds exactly one number:
+`openInvoices`, plus the data `asOf` date. No amounts, no client names,
+ever. It exists so Sharma Home can show an open-invoice count — the only
+Finance figure allowed outside the code screen. `tools/encrypt.py`
+regenerates it from the same plain data on every publish, so it cannot
+drift. Nothing else leaves this app: no Finance numbers on Home tiles, TV
+mode, or any client/crew page.
 
 Old links: `https://sharmaelechvac.github.io/sharma-pnl/` redirects to the P&L tab. `/sharma-ar/#pnl`, `#budget`, `#collections` open those tabs. The old Collections worker app is no longer on Sharma Home; its data was folded into the `collections` section on 2026-11-17 (it had 0 invoices and 5 We owe rows).
 
@@ -22,9 +45,11 @@ Old links: `https://sharmaelechvac.github.io/sharma-pnl/` redirects to the P&L t
 | `index.html` | AR page shell |
 | `styles.css` | Sharma standard: navy/gold, flat, 4px corners, 16px min text, 48px taps |
 | `app.js` | AR: loads the encrypted file through `lock.js`, does the math, draws the page |
-| `lock.js` | Code screen + WebCrypto decrypt. AR, Budget, and P&L use this. Wrong-code alerts are labeled per app. |
+| `lock.js` | Code screen + WebCrypto decrypt, shared by all five tabs. Derived keys are kept per data file (keyed by salt), so the finance file and the prices file each unlock once per session. Wrong-code alerts are labeled per app. |
 | `finance-data.enc.json` | **The data file, encrypted.** The schema requires `budgets.jobs` (empty until entered) inside this file. The app treats a missing section as empty until the next encrypt. |
-| `tools/encrypt.py` | Schema check + encrypt (and `--decrypt` for editing) |
+| `finance-counts.json` | Counts-only outward feed (open-invoice count + as-of date). Written by `tools/encrypt.py` on every publish. |
+| `materials/` | Material Costs tab (catalog UI; reads the pricing app's published files, holds no data of its own) |
+| `tools/encrypt.py` | Schema check + encrypt (and `--decrypt` for editing); also regenerates `finance-counts.json` |
 | `.gitignore` | Keeps the plain `finance-data.json` out of git |
 | `SCHEMA.md` | Field-by-field rules for the data file |
 | `finance-data.schema.json` | JSON Schema to validate the data file |

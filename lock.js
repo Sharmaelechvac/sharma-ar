@@ -1,8 +1,11 @@
-/* Sharma passcode lock — shared by every tab of Sharma Finance (AR, P&L, Budget, Collections).
-   The finance data is published only as finance-data.enc.json (AES-GCM 256, key from
-   PBKDF2-SHA256). This file asks for the code, derives the key in the browser with WebCrypto,
-   and decrypts. Only the derived key is kept, in sessionStorage (this tab only). The code
-   itself is never stored, logged or sent anywhere. */
+/* Sharma passcode lock — shared by every tab of Sharma Finance (AR, P&L, Budget,
+   Collections, Material Costs). The finance data is published only as an encrypted
+   envelope (AES-GCM 256, key from PBKDF2-SHA256). This file asks for the code, derives
+   the key in the browser with WebCrypto, and decrypts. Only derived keys are kept, in
+   sessionStorage (this tab only) — one per data file, keyed by that file's salt, so the
+   finance file and the material-prices file (same code, different salt) each unlock once
+   per session instead of knocking each other's key out. The code itself is never stored,
+   logged or sent anywhere. */
 (function () {
   "use strict";
   var STORE = "sharma-fin-key:v1";
@@ -36,13 +39,33 @@
   function saved(e) {
     try {
       var s = JSON.parse(sessionStorage.getItem(STORE) || "null");
-      if (!s || s.salt !== e.salt || s.iterations !== e.iterations || !s.k) return null;
-      return subtle.importKey("raw", unb64(s.k), { name: "AES-GCM" }, false, ["decrypt"]);
+      if (!s) return null;
+      var ent = null;
+      if (s.keys && s.keys[e.salt]) ent = s.keys[e.salt];
+      else if (s.salt === e.salt) ent = s; // legacy single-key format
+      if (!ent || ent.iterations !== e.iterations || !ent.k) return null;
+      return subtle.importKey("raw", unb64(ent.k), { name: "AES-GCM" }, false, ["decrypt"]);
     } catch (x) { return null; }
+  }
+  // Drop only this file's stored key (bad/corrupt entry), never the other files' keys.
+  function forget(e) {
+    try {
+      var s = JSON.parse(sessionStorage.getItem(STORE) || "null");
+      if (!s) return;
+      if (s.keys && s.keys[e.salt]) { delete s.keys[e.salt]; sessionStorage.setItem(STORE, JSON.stringify(s)); }
+      else if (s.salt === e.salt) sessionStorage.removeItem(STORE);
+    } catch (x) {}
   }
   function remember(key, e) {
     return subtle.exportKey("raw", key).then(function (raw) {
-      try { sessionStorage.setItem(STORE, JSON.stringify({ salt: e.salt, iterations: e.iterations, k: b64(raw) })); } catch (x) {}
+      try {
+        var s = {};
+        try { s = JSON.parse(sessionStorage.getItem(STORE) || "null") || {}; } catch (x) { s = {}; }
+        var keys = (s.keys && typeof s.keys === "object") ? s.keys : {};
+        if (s.salt && s.k && !keys[s.salt]) keys[s.salt] = { iterations: s.iterations, k: s.k }; // migrate legacy entry
+        keys[e.salt] = { iterations: e.iterations, k: b64(raw) };
+        sessionStorage.setItem(STORE, JSON.stringify({ keys: keys }));
+      } catch (x) {}
     });
   }
 
@@ -54,6 +77,7 @@
     var path = (location.pathname || "").toLowerCase();
     // /sharma-ar/budget/ must be Budget, not AR. Check it first.
     if (path.indexOf("/budget") !== -1) return "Sharma Budget";
+    if (path.indexOf("/materials") !== -1) return "Sharma Material Costs";
     if (path.indexOf("/sharma-ar/pnl") !== -1) return "Sharma P&L";
     if (path.indexOf("/collections") !== -1) return "Sharma Collections";
     if (path.indexOf("/sharma-ar") !== -1) return "Sharma AR";
@@ -206,7 +230,7 @@
         var k = saved(e);
         var tryKey = k ? k.then(function (key) { return decrypt(key, e); }) : Promise.reject();
         return tryKey.catch(function () {
-          try { sessionStorage.removeItem(STORE); } catch (x) {}
+          forget(e);
           return prompt(e, opts);
         });
       })
