@@ -47,7 +47,7 @@
   <footer>Sharma Electric &amp; HVAC · Lic. EC13013924 · CAC1823596</footer>
 </main>
 <script>
-if (window.SK && SK.scheme) SK.scheme.mountToggle(document.getElementById("appearance"));
+document.addEventListener("DOMContentLoaded", function(){ if (window.SK && SK.scheme) SK.scheme.mountToggle(document.getElementById("appearance")); });
 document.getElementById("lockAppBtn").addEventListener("click", function(){ try { sessionStorage.removeItem("sharma-fin-key:v1"); } catch (e) {} location.href = "../"; });
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) { addEventListener("load", function(){ navigator.serviceWorker.register("../sw.js?kit=https://sharma-kit.sharma-crew.workers.dev", { scope: "/sharma-ar/" }).catch(function(){}); }); }
 </script>
