@@ -222,6 +222,37 @@
         paid.map(function (x) { return row(x).replace('<div class="i-top">', '<div class="i-client">' + esc(x.client) + '</div><div class="i-top">'); }).join("") +
         "</div></div>";
     }
+
+    // Invoices Sent register — every invoice that actually went out (has a sent date and
+    // is not undelivered), Jobber-issued and email-only alike, newest sent first, with
+    // total sent / collected / still open. If it was sent, it is listed here.
+    var sentList = invs.filter(function (x) { return x.sent != null && !x.isUnd; });
+    var sPaid = sentList.filter(function (x) { return x.isPaid; });
+    var sOpen = sentList.filter(function (x) { return !x.isPaid; });
+    $("s-total").textContent = money(sum(sentList));
+    $("s-total-sub").textContent = plural(sentList.length, "invoice");
+    $("s-coll").textContent = money(sum(sPaid));
+    $("s-coll-sub").textContent = plural(sPaid.length, "invoice");
+    $("s-open").textContent = money(sum(sOpen));
+    $("s-open-sub").textContent = plural(sOpen.length, "invoice");
+    sentList.sort(function (a, b) {
+      return (b.sent - a.sent) || String(b.number).localeCompare(String(a.number), undefined, { numeric: true });
+    });
+    var stb = document.querySelector("#sent-table tbody");
+    if (!sentList.length) {
+      stb.innerHTML = '<tr><td colspan="5">No sent invoices in the data file.</td></tr>';
+    } else {
+      stb.innerHTML = sentList.map(function (x) {
+        var st = x.isPaid ? '<span class="flag flag-paid">Paid</span>'
+          : x.isOver ? '<span class="flag flag-over">Open — past due</span>'
+          : '<span class="flag flag-open">Open</span>';
+        return '<tr><td class="num">#' + esc(x.number) + "</td>" +
+          "<td>" + esc(x.client) + (x.jobAddress ? '<div class="s-job">' + esc(x.jobAddress) + "</div>" : "") + "</td>" +
+          '<td class="r num">' + money(x.amount) + "</td>" +
+          '<td class="s-date">' + esc(fmtDate(x.sent)) + "</td>" +
+          "<td>" + st + "</td></tr>";
+      }).join("");
+    }
   }
 
   function setOpen(btn, open) {

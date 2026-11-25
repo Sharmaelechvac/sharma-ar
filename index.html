@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="https://sharma-kit.sharma-crew.workers.dev/assets/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://sharma-kit.sharma-crew.workers.dev/assets/favicon-32.png">
 <link rel="stylesheet" href="https://sharma-kit.sharma-crew.workers.dev/sharma-kit.css">
-<link rel="stylesheet" href="styles.css?v=20261117-2">
+<link rel="stylesheet" href="styles.css?v=20261125-1">
 <link rel="stylesheet" href="shell.css?v=2">
 <script src="https://sharma-kit.sharma-crew.workers.dev/sharma-kit.js" defer></script>
 </head>
@@ -92,6 +92,32 @@
     <div id="clients"></div>
   </section>
 
+  <section class="panel" aria-labelledby="h-sent">
+    <h2 id="h-sent">Invoices Sent</h2>
+    <p class="note">Every invoice that has actually gone out — Jobber-issued and email-only alike — newest sent first. If it was sent, it is listed here.</p>
+    <div class="tiles t3">
+      <div class="tile">
+        <div class="t-label">Total sent</div>
+        <div class="t-num" id="s-total">$0</div>
+        <div class="t-sub" id="s-total-sub">0 invoices</div>
+      </div>
+      <div class="tile">
+        <div class="t-label">Collected</div>
+        <div class="t-num" id="s-coll">$0</div>
+        <div class="t-sub" id="s-coll-sub">0 invoices</div>
+      </div>
+      <div class="tile tile-over">
+        <div class="t-label">Still open</div>
+        <div class="t-num" id="s-open">$0</div>
+        <div class="t-sub" id="s-open-sub">0 invoices</div>
+      </div>
+    </div>
+    <table class="sent" id="sent-table">
+      <thead><tr><th scope="col">Invoice</th><th scope="col">Client</th><th scope="col" class="r">Amount</th><th scope="col">Sent</th><th scope="col">Status</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
   <section class="panel" aria-labelledby="h-paid">
     <h2 id="h-paid">Paid</h2>
     <div id="paid"></div>
@@ -103,7 +129,7 @@
   </footer>
 </main>
 <script src="lock.js"></script>
-<script src="app.js?v=20261117-2"></script>
+<script src="app.js?v=20261125-1"></script>
 <script>if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) { addEventListener("load", function(){ navigator.serviceWorker.register("sw.js?kit=https://sharma-kit.sharma-crew.workers.dev", { scope: "/sharma-ar/" }).catch(function(){}); }); }</script>
 </body>
 </html>

@@ -107,6 +107,19 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
   .logo{height:48px}
   .app-name{font-size:18px}
 }
+/* Invoices Sent register */
+.tiles.t3 .tile:nth-child(-n+2){grid-column:auto}
+.tiles.t3 .tile:nth-child(-n+2) .t-num{font-size:24px}
+.tiles.t3 .tile:last-child{grid-column:1 / -1}
+table.sent td{vertical-align:top}
+.sent .flag{margin-top:0;white-space:nowrap}
+.sent .s-date{white-space:nowrap}
+.s-job{color:var(--gray);font-size:14px;margin-top:2px}
+@media (min-width:600px){
+  .tiles.t3{grid-template-columns:repeat(3,1fr)}
+  .tiles.t3 .tile:last-child{grid-column:auto}
+}
+
 @media print{
   body{background:#fff}
   .tools,.chev{display:none}
